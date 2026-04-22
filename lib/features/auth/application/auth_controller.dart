@@ -15,7 +15,6 @@ final authControllerProvider = AsyncNotifierProvider<AuthController, void>(
 class AuthController extends AsyncNotifier<void> {
   AuthService get _service => ref.read(authServiceProvider);
 
-  const x = "omar"
   @override
   Future<void> build() async {
     return;

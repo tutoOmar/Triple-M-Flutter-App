@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/material_category_service.dart';
@@ -32,6 +33,9 @@ class MaterialCategoriesController extends AsyncNotifier<void> {
       await _service.create(name: name, isActive: isActive);
       state = const AsyncData(null);
       return null;
+    } on FirebaseException catch (error, stackTrace) {
+      state = AsyncError(error, stackTrace);
+      return _messageForFirebase(error);
     } catch (error, stackTrace) {
       state = AsyncError(error, stackTrace);
       return _messageFor(error);
@@ -50,6 +54,9 @@ class MaterialCategoriesController extends AsyncNotifier<void> {
       await _service.update(id: id, name: name, isActive: isActive);
       state = const AsyncData(null);
       return null;
+    } on FirebaseException catch (error, stackTrace) {
+      state = AsyncError(error, stackTrace);
+      return _messageForFirebase(error);
     } catch (error, stackTrace) {
       state = AsyncError(error, stackTrace);
       return _messageFor(error);
@@ -63,6 +70,9 @@ class MaterialCategoriesController extends AsyncNotifier<void> {
       await _service.delete(id);
       state = const AsyncData(null);
       return null;
+    } on FirebaseException catch (error, stackTrace) {
+      state = AsyncError(error, stackTrace);
+      return _messageForFirebase(error);
     } catch (error, stackTrace) {
       state = AsyncError(error, stackTrace);
       return _messageFor(error);
@@ -79,6 +89,9 @@ class MaterialCategoriesController extends AsyncNotifier<void> {
       await _service.setActive(id: id, isActive: isActive);
       state = const AsyncData(null);
       return null;
+    } on FirebaseException catch (error, stackTrace) {
+      state = AsyncError(error, stackTrace);
+      return _messageForFirebase(error);
     } catch (error, stackTrace) {
       state = AsyncError(error, stackTrace);
       return _messageFor(error);
@@ -112,5 +125,22 @@ class MaterialCategoriesController extends AsyncNotifier<void> {
       return 'No se puede eliminar porque ya está usada por materias primas.';
     }
     return 'No se pudo completar la acción. Intenta nuevamente.';
+  }
+
+  String _messageForFirebase(FirebaseException error) {
+    switch (error.code) {
+      case 'permission-denied':
+        return 'Firestore rechazó la operación. Revisa las reglas de lectura/escritura de la colección materialCategories.';
+      case 'unauthenticated':
+        return 'La sesión no está autenticada para escribir en Firestore.';
+      case 'unavailable':
+        return 'Firestore no está disponible en este momento.';
+      case 'failed-precondition':
+        return 'Firestore requiere una condición previa. Revisa índices o reglas.';
+      case 'not-found':
+        return 'No se encontró el documento o la colección destino.';
+      default:
+        return 'Firestore respondió con error ${error.code}. Revisa conexión y reglas.';
+    }
   }
 }

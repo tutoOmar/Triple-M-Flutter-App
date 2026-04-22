@@ -19,6 +19,10 @@ class MaterialCategoryService {
     await _categoriesCollection.limit(1).get();
   }
 
+  Future<void> ping() async {
+    await _firestore.collection('_health').limit(1).get();
+  }
+
   Stream<List<MaterialCategory>> watchAll() {
     return _categoriesCollection
         .orderBy('nameKey')

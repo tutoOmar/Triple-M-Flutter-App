@@ -98,6 +98,13 @@ class MaterialCategoriesPage extends ConsumerWidget {
 
     if (message != null && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    } else if (category == null && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Categoría creada con éxito'),
+          backgroundColor: Colors.green,
+        ),
+      );
     }
   }
 

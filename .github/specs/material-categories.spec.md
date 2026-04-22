@@ -1,5 +1,5 @@
 ---
-status: APPROVED
+status: IMPLEMENTED
 feature: material-categories
 author: spec-generator
 created: 2026-04-22
@@ -31,8 +31,7 @@ Excluye:
 
 ## 3. Usuarios y permisos
 
-- `admin`: puede crear, editar y eliminar.
-- `operadora`: puede gestionar categorías según el permiso acordado para este proyecto.
+sin restricciones de momento
 
 ## 4. Dependencias de datos
 

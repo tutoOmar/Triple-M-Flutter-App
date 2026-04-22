@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../auth/application/auth_controller.dart';
 
@@ -14,6 +15,10 @@ class HomePage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Mi App'),
         actions: [
+          TextButton(
+            onPressed: () => context.go('/material-categories'),
+            child: const Text('Categorías'),
+          ),
           TextButton(
             onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
             child: const Text('Salir'),
@@ -39,6 +44,11 @@ class HomePage extends ConsumerWidget {
               const Text(
                 'La base Firebase ya está lista. Ahora puedes construir los módulos de materias primas, subproductos, productos y simulador por archivos separados.',
                 textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () => context.go('/material-categories'),
+                child: const Text('Abrir categorías de materias primas'),
               ),
             ],
           ),

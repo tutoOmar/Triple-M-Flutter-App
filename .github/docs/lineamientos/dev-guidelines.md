@@ -34,7 +34,7 @@ Este documento centraliza los principios y reglas **obligatorias** para garantiz
 *   **Respuestas Estándar:** Uso de códigos HTTP exactos y respuestas de error en formato *Problem Details* (RFC 9457). El sobre (envelope) de la respuesta debe tener un campo `data`.
 *   **Idempotencia:** Endpoints POST de creación obligan al uso del header `Idempotency-Key` (inter-servicios).
 *   **Evolución:** Incluir la versión en la URI (ej. `/v1/`). Los *breaking changes* solo se permiten actualizando la versión mayor y deprecando la anterior.
-*   **Controles de Datos:** Colecciones requieren paginación obligatoria (límite máximo 100). Filtrado, ordenamiento y búsquedas deben ir por *query parameters*.
+*   **Controles de Datos:** Colecciones requieren patinajeción obligatoria (límite máximo 100). Filtrado, ordenamiento y búsquedas deben ir por *query parameters*.
 *   **Protección:** Implementar siempre *Rate Limiting* y exponer cabeceras `X-RateLimit-*`.
 
 ### 5. Datos y Persistencia (LIN-DEV-012)

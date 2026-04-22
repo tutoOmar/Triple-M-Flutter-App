@@ -79,7 +79,7 @@ Campos sugeridos:
 - `description` string opcional.
 - `outputUnit` string, por ejemplo `pieza`, `set`, `panel`.
 - `manufacturaCost` number.
-- `paginajeCost` number.
+- `patinajejeCost` number.
 - `armadoBolsillosCost` number, usar `0` si no aplica.
 - `active` bool.
 - `createdAt` timestamp.
@@ -172,7 +172,7 @@ Si el producto final tiene `clientProvidesLona = true`, se excluyen de la simula
 Cada subproducto siempre considera:
 
 - `manufacturaCost`;
-- `paginajeCost`;
+- `patinajejeCost`;
 - `armadoBolsillosCost`.
 
 Si un subproducto no usa armado de bolsillos, ese campo se guarda en `0`.
@@ -203,7 +203,7 @@ La app no convierte entre unidades.
   "name": "Panel frontal",
   "outputUnit": "pieza",
   "manufacturaCost": 12,
-  "paginajeCost": 4,
+  "patinajejeCost": 4,
   "armadoBolsillosCost": 3,
   "ingredients": [
     {
@@ -248,7 +248,7 @@ La app no convierte entre unidades.
 costoSubproducto =
   suma(ingrediente.quantityPerUnit * material.currentPrice)
   + manufacturaCost
-  + paginajeCost
+  + patinajejeCost
   + armadoBolsillosCost
 ```
 

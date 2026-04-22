@@ -137,7 +137,7 @@ Detalle del producto con:
 Detalle del subproducto con:
 
 - materias primas utilizadas;
-- costos de manufactura, paginaje y armado de bolsillos;
+- costos de manufactura, patinajeje y armado de bolsillos;
 - costo por unidad;
 - impacto de la variante `clientePoneLaLona` cuando aplique.
 
@@ -153,7 +153,7 @@ Costo unitario del subproducto =
 
 - suma de cada materia prima utilizada multiplicada por su cantidad;
 - mas costo de manufactura;
-- mas costo de paginaje;
+- mas costo de patinajeje;
 - mas costo de armado de bolsillos cuando exista.
 
 ### Producto Final

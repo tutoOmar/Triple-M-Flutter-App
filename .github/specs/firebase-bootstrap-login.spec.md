@@ -3,7 +3,7 @@ status: DRAFT
 feature: firebase-bootstrap-login
 author: spec-generator
 created: 2026-04-22
-scope: app bootstrap, Firebase Auth, login and logout
+scope: app bootstrap, Firebase Auth, Firestore, login and logout
 ---
 
 # Spec: Firebase Bootstrap + Login
@@ -12,6 +12,7 @@ scope: app bootstrap, Firebase Auth, login and logout
 
 Configurar la app Flutter para conectarse a Firebase y permitir el acceso inicial con correo y contraseña.
 Esta spec cubre el arranque base del proyecto y el acceso autenticado, que es requisito para usar cualquier otra parte de la app.
+Tambien deja listo el proyecto para leer y escribir en Firestore desde el primer arranque.
 
 ## 2. Alcance
 
@@ -19,6 +20,7 @@ Incluye:
 
 - configuración inicial de Firebase con `flutterfire configure`;
 - inicialización de Firebase en la app;
+- instalación de los paquetes base de Firebase para Flutter;
 - login con correo y contraseña;
 - logout;
 - reglas base de acceso autenticado;
@@ -28,7 +30,7 @@ Excluye:
 
 - recuperación de contraseña;
 - registro público;
-- Storage, Cloud Functions y mensajería;
+- Storage, Cloud Functions, mensajería y analítica;
 - configuración de módulos funcionales de negocio.
 
 ## 3. Usuarios y permisos
@@ -42,6 +44,9 @@ No existe acceso anónimo.
 
 - Firebase Auth.
 - Firestore.
+- `firebase_core`.
+- `firebase_auth`.
+- `cloud_firestore`.
 - `.github/specs/firebase-contracts.spec.md`.
 - `DATA_MODEL.md`.
 
@@ -52,6 +57,7 @@ No existe acceso anónimo.
 - Botón de entrar visible.
 - Al autenticar, llevar al catálogo principal de productos.
 - Si la sesión existe, entrar directamente sin repetir login.
+- Si Firebase falla al inicializar, mostrar un estado de error comprensible y no una pantalla rota.
 
 ## 6. Estado requerido
 
@@ -60,6 +66,8 @@ No existe acceso anónimo.
 - loading de login;
 - error de autenticación;
 - usuario autenticado y rol.
+- estado de inicialización de Firebase;
+- estado de conexión inicial a Firestore cuando corresponda.
 
 ## 7. Reglas de negocio
 
@@ -68,6 +76,7 @@ No existe acceso anónimo.
 - No existe registro público.
 - Si el usuario no está autenticado, no puede entrar al resto de la app.
 - La app debe fallar de forma controlada si Firebase no está inicializado.
+- El arranque de la app debe esperar a `Firebase.initializeApp` antes de renderizar la navegación protegida.
 
 ## 8. Casos borde
 
@@ -80,16 +89,40 @@ No existe acceso anónimo.
 ## 9. Criterios de aceptación
 
 - La app inicializa Firebase antes de mostrar el contenido principal.
+- La app usa la configuración generada por FlutterFire (`firebase_options.dart`).
 - El usuario puede iniciar sesión con correo y contraseña.
 - El usuario puede cerrar sesión.
 - La app no permite navegar a módulos protegidos sin autenticación.
 - Los errores de autenticación se muestran de forma legible.
+- La app queda lista para usar Firestore desde la misma base de inicialización.
 
 ## 10. Notas de implementación
 
-- Requiere `firebase_options.dart` generado.
-- Debe usar Firebase Auth y Firestore desde el primer arranque.
+- Ejecutar primero:
+
+	```bash
+	dart pub global activate flutterfire_cli
+	flutterfire configure --project=triple-m-1bda1
+	```
+
+- La inicialización en `main.dart` debe seguir esta secuencia:
+
+	```dart
+	import 'package:firebase_core/firebase_core.dart';
+	import 'firebase_options.dart';
+
+	Future<void> main() async {
+		WidgetsFlutterBinding.ensureInitialized();
+		await Firebase.initializeApp(
+			options: DefaultFirebaseOptions.currentPlatform,
+		);
+		runApp(const MyApp());
+	}
+	```
+
+- Deben existir las dependencias base de Firebase para Flutter antes de implementar el login.
 - La navegación debe redirigir por estado de sesión.
+- Esta spec es la base técnica para que las demás specs de negocio puedan leer y escribir en Firestore.
 
 ## 11. Estrategia de pruebas
 

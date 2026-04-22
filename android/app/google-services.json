@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "269474518191",
+    "project_id": "triple-m-1bda1",
+    "storage_bucket": "triple-m-1bda1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:269474518191:android:671340a53678c1e2f5f05a",
+        "android_client_info": {
+          "package_name": "com.example.mi_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdl5dZcH-riA_gBFUVc2Yw0ZA39IzG-ck"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

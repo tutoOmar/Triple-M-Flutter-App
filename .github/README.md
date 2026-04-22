@@ -1,55 +1,39 @@
-# Frontend — Cotizador de Daños (Angular 19)
+# Flutter + Firebase
 
-Este repositorio contiene **exclusivamente** el frontend (`cotizador-danos-web`), una SPA Angular 19 que no incluye código de backend, base de datos ni Docker.
-
----
-
-## Backends de Referencia
-
-| Servicio | URL base | Descripción |
-|----------|----------|-------------|
-| `plataforma-danos-back` | `http://localhost:8080` | Lógica de negocio de cotización |
-| `plataforma-core-ohs` | `http://localhost:8081` | Stub de servicios core (códigos postales, tarifas) |
-
-> Las URLs se configuran en `src/environments/environment.ts`. **Nunca hardcodear** URLs en el código.
+Este repositorio contiene la app Flutter de gestión financiera para un negocio interno de manufactura.
+La app usa Firebase Auth y Cloud Firestore como base técnica.
 
 ---
 
-## Flujo de Desarrollo (ASDD Frontend)
+## Flujo de Desarrollo (ASDD Flutter)
 
 ```
-Requerimiento → Spec → Frontend Developer → Test Engineer FE → QA
+Requerimiento → Spec → Flutter Developer → Test Engineer Flutter → QA → Doc
 ```
 
 ### Paso 1 — Spec
-```
-/generate-spec <nombre-feature>
-```
+
 Genera `.github/specs/<feature>.spec.md`. Debe alcanzar `status: APPROVED` antes de implementar.
 
 ### Paso 2 — Implementación
-```
-/implement-frontend <nombre-feature>
-```
-Orden: Models → State (Signals) → HTTP Service → Component → Template (Tailwind).
+
+Orden: Models → Repositories → State/Providers → Widgets → Routes → Theme.
 
 ### Paso 3 — Tests
-```
-/unit-testing <nombre-feature>
-```
-Tests de state service, HTTP service y componente con Jasmine/Jest.
+
+Tests de providers, repositorios y widgets con `flutter_test`.
 
 ---
 
 ## Comandos de Desarrollo
 
 ```bash
-npm install          # Instalar dependencias
-ng serve             # Dev server → http://localhost:4200
-ng build --configuration production
-ng test              # Tests unitarios
+flutter pub get
+flutter run
+flutter test
+flutter build apk
 ```
 
 ---
 
-> Ver `ARCHITECTURE.md` en la raíz del proyecto para arquitectura completa, contratos de API y reglas de UI.
+> Ver `ARCHITECTURE.md` y `DATA_MODEL.md` en la raíz del proyecto para arquitectura completa y reglas de negocio.

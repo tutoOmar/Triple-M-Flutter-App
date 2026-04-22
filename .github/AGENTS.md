@@ -1,8 +1,9 @@
-# AGENTS.md — cotizador-danos-web (Frontend Angular 19)
+# AGENTS.md — mi_app (Flutter + Firebase)
 
 > Reglas activas para todos los agentes que trabajen en este repositorio.
 
-Este repositorio es **exclusivo del frontend** (`cotizador-danos-web`). No contiene código Java, Spring Boot, Docker ni base de datos.
+Este repositorio contiene **solo** la app Flutter de gestión financiera para manufactura, conectada a Firebase Auth y Cloud Firestore.
+No contiene backend propio, ni Java, ni Spring Boot.
 
 ---
 
@@ -12,75 +13,41 @@ Este repositorio es **exclusivo del frontend** (`cotizador-danos-web`). No conti
 |--------|---------|------|
 | **Orchestrator** | `.github/agents/orchestrator.agent.md` | Coordinación |
 | **Spec Generator** | `.github/agents/spec-generator.agent.md` | Especificación (Fase 1) |
-| **Frontend Developer** | `.github/agents/frontend-developer.agent.md` | Implementación (Fase 2) |
-| **Test Engineer FE** | `.github/agents/test-engineer-frontend.agent.md` | Tests unitarios (Fase 3) |
+| **Flutter Developer** | `.github/agents/frontend-developer.agent.md` | Implementación (Fase 2) |
+| **Test Engineer Flutter** | `.github/agents/test-engineer-frontend.agent.md` | Tests unitarios (Fase 3) |
 | **QA Agent** | `.github/agents/qa.agent.md` | Gherkin y UI Risks (Fase 4) |
 | **Documentation Agent** | `.github/agents/documentation.agent.md` | Documentación (Fase 5) |
 
 ---
 
-## Flujo de Trabajo (ASDD Frontend)
+## Flujo de Trabajo (ASDD Flutter)
 
 ```
 [Orchestrator]
       ↓
-[1. Spec] → [2. Frontend Developer] → [3. Test Engineer FE] → [4. QA Agent] → [5. Doc Agent]
+[1. Spec] → [2. Flutter Developer] → [3. Test Engineer Flutter] → [4. QA Agent] → [5. Doc Agent]
 ```
 
 1. **Spec Generator**: Genera `.github/specs/<feature>.spec.md`. Debe tener `status: APPROVED` antes de seguir.
-2. **Frontend Developer**: Implementa `models` → `state` → `service` → `component` → `template`.
-3. **Test Engineer FE**: Genera tests unitarios (`state service`, `HTTP service`, `component`).
-4. **QA Agent**: Genera escenarios Gherkin enfocados en UI/UX y edge cases.
-5. **Documentation Agent**: Actualiza README y guías de componentes.
+2. **Flutter Developer**: Implementa `models` → `repositories` → `state` → `widgets` → `routes`.
+3. **Test Engineer Flutter**: Genera tests unitarios y de widgets para lógica, estado y Firebase.
+4. **QA Agent**: Genera escenarios Gherkin enfocados en UI/UX, accesibilidad y casos borde.
+5. **Documentation Agent**: Actualiza README, guías y documentación visual.
 
 ---
 
-## Backends de Referencia
+## Fuentes de Verdad
 
-> Las URLs se definen en `src/environments/environment.ts`. Los agentes deben leerlas de allí.
-> ⚠️ **Fuente de verdad de endpoints**: `.github/specs/api-contracts.spec.md` — distingue `[REAL]` vs `[PLANEADO]`.
+> Los agentes deben leer estos documentos antes de generar specs, implementar o testear.
 
-| Servicio | URL local | Variable en `environment.ts` |
-|----------|-----------|------------------------------|
-| `plataforma-danos-back` | `http://localhost:8080` | `environment.danosBackUrl` |
-| `plataforma-core-ohs` | `http://localhost:8081` | `environment.coreOhsUrl` |
-
-### Endpoints REALES — plataforma-danos-back `:8080`
-
-| Método | Endpoint | Servicio Angular | Descripción |
-|--------|----------|-----------------|-------------|
-| `POST` | `/v1/folios` | `cotizacion.service.ts` | Crear/recuperar folio (idempotente) |
-| `PUT` | `/v1/quotes/{folio}/general-info` | `cotizacion.service.ts` | Actualizar datos del asegurado (requiere `version`) |
-| `POST` | `/v1/quotes/{folio}/calculate` | `cotizacion.service.ts` | Ejecutar motor de cálculo de primas |
-
-### Endpoints REALES — plataforma-core-ohs `:8081` (stub/mock)
-
-| Método | Endpoint | Servicio Angular | Descripción |
-|--------|----------|-----------------|-------------|
-| `GET` | `/v1/folios` | `core-ohs.service.ts` | Siguiente número de folio |
-| `GET` | `/v1/subscribers` | `core-ohs.service.ts` | Catálogo de suscriptores |
-| `GET` | `/v1/agents` | `core-ohs.service.ts` | Catálogo de agentes |
-| `GET` | `/v1/business-lines` | `core-ohs.service.ts` | Giros con `claveIncendio` |
-| `GET` | `/v1/catalogs/risk-classification` | `core-ohs.service.ts` | Clasificación de riesgo |
-| `GET` | `/v1/catalogs/guarantees` | `core-ohs.service.ts` | Garantías tarifables |
-| `GET` | `/v1/zip-codes/{zipCode}` | `core-ohs.service.ts` | Info del CP (estado, zona, zonaCatastrófica) |
-| `POST` | `/v1/zip-codes/validate` | `core-ohs.service.ts` | Validar existencia de CP |
-| `GET` | `/v1/tariffs/incendio` | `core-ohs.service.ts` | Tarifa incendio |
-| `GET` | `/v1/tariffs/cat` | `core-ohs.service.ts` | Tarifa catastrófica |
-| `GET` | `/v1/tariffs/fhm` | `core-ohs.service.ts` | Tarifa FHM |
-| `GET` | `/v1/tariffs/parametros-calculo` | `core-ohs.service.ts` | Parámetros del motor de cálculo |
-
----
-
-## Documentos que los Agentes Deben Cargar
-
-| Documento | Ruta | Quién lo carga |
-|-----------|------|----------------|
-| Reglas de Oro | `.github/AGENTS.md` | Todos |
-| Contexto general | `.github/copilot-instructions.md` | Todos |
-| **Contratos de API (endpoints reales)** | `.github/specs/api-contracts.spec.md` | Frontend Developer, Test Engineer FE |
-| Stack y restricciones frontend | `.github/instructions/frontend.instructions.md` | Frontend Developer, Test Engineer FE |
-| Arquitectura completa | `ARCHITECTURE.md` | Todos |
+| Documento | Propósito |
+|-----------|-----------|
+| `ARCHITECTURE.md` | Arquitectura funcional y técnica del proyecto |
+| `DATA_MODEL.md` | Modelo de datos y reglas de cálculo |
+| `.github/specs/firebase-contracts.spec.md` | Fuente de verdad de Firebase Auth, Firestore y permisos |
+| `.github/specs/ui-design.spec.md` | Sistema de diseño y UX |
+| `.github/specs/frontend-feature.spec.template.md` | Plantilla base para cada spec funcional |
+| `.github/instructions/frontend.instructions.md` | Stack, estructura y restricciones Flutter |
 
 ---
 
@@ -91,17 +58,17 @@ Este repositorio es **exclusivo del frontend** (`cotizador-danos-web`). No conti
 - **No código no autorizado**: no generar código sin solicitud explícita del usuario.
 - **No modificaciones no autorizadas**: no modificar archivos sin aprobación explícita.
 - **Preservar la lógica existente**: respetar patrones arquitectónicos y estilo del proyecto.
+- **No mezclar stacks**: no introducir artefactos de otro stack frontend ni conceptos de backend Java.
 
 ### II. Reglas Técnicas No Negociables
 
-1. **Standalone Components**: Nunca generar `@NgModule`.
-2. **Signals para estado**: `signal()` + `computed()` + `effect()`. No usar `BehaviorSubject` para estado de UI.
-3. **Tailwind CSS únicamente**: Sin Angular Material, PrimeNG ni otras librerías de UI.
-4. **Versionado optimista**: Todo `PUT`/`PATCH` incluye el campo `version` del signal de estado.
-5. **Sin autenticación**: No hay login, guards de auth ni interceptor JWT.
-6. **Lazy loading**: `loadComponent` en `app.routes.ts` para cada feature.
-7. **Environments**: URLs de backends desde `environment.ts`, nunca hardcodeadas.
-8. **No secrets**: Ninguna API key ni credencial en el código fuente.
+1. **Flutter nativo**: usar widgets, rutas y proveedores de estado de Flutter; evitar mezclas con stacks anteriores.
+2. **Estado con Riverpod**: preferir `Notifier` / `AsyncNotifier` / providers inyectables; no usar `BehaviorSubject` ni patrones de UI de otros frameworks.
+3. **Navegación con go_router**: rutas por feature, navegación declarativa y profunda.
+4. **Firebase como backend**: Firebase Auth y Firestore son la fuente de autenticación y persistencia.
+5. **Config segura**: no hardcodear credenciales; usar `flutterfire configure` y archivos generados.
+6. **Specs obligatorias**: ninguna implementación sin spec aprobada.
+7. **No secretos**: ninguna API key, token o credencial en el código fuente.
 
 ### III. Clarificación de Requisitos
 
@@ -113,8 +80,8 @@ Este repositorio es **exclusivo del frontend** (`cotizador-danos-web`). No conti
 ## Comandos de Desarrollo
 
 ```bash
-npm install          # Instalar dependencias
-ng serve             # Dev server → http://localhost:4200
-ng build --configuration production
-ng test              # Tests unitarios
+flutter pub get
+flutter run
+flutter test
+flutter build apk
 ```

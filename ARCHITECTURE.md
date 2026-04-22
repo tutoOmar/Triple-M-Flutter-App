@@ -239,8 +239,6 @@ Se conserva la esencia del flujo ASDD, pero adaptada a Flutter:
 4. QA Agent: define casos Gherkin de UX y riesgos visuales.
 5. Documentation Agent: actualiza arquitectura, modelo de datos y README.
 
-No aplican los contratos de API ni la logica de backend del proyecto Angular anterior.
-
 ## Decisiones Cerradas Para Esta Version
 
 - Un solo negocio.

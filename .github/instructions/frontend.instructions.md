@@ -1,129 +1,136 @@
 ---
-applyTo: "src/**/*.ts,src/**/*.html"
+applyTo: "lib/**/*.dart,test/**/*.dart"
 ---
 
-> **Scope**: Se aplica a todo el código frontend en `src/` — Angular 19 Standalone, TypeScript estricto, Tailwind CSS.
+> **Scope**: Se aplica a todo el código Flutter en `lib/` y `test/`.
 
-# Instrucciones para Frontend (Angular 19 — Standalone + Signals)
+# Instrucciones para Frontend (Flutter + Firebase)
 
 ## Stack Fijo (No Negociable)
 
-- **Angular 19** con **Standalone Components** — sin NgModules
-- **TypeScript strict** (`"strict": true` en `tsconfig.json`)
-- **Angular Signals** para todo estado de UI: `signal()`, `computed()`, `effect()`
-- **RxJS** solo para `HttpClient` (llamadas HTTP). No usar para estado de UI.
-- **Tailwind CSS v3** para estilos — sin Angular Material, PrimeNG ni otras librerías
-- `HttpClient` configurado con `provideHttpClient(withInterceptors([...]))` en `app.config.ts`
-- Router con `provideRouter(routes)` y lazy loading por feature
+- **Flutter** para la interfaz completa
+- **Dart** con null safety habilitado
+- **Riverpod** para estado de aplicación y dependencias
+- **go_router** para navegación declarativa y lazy feature loading
+- **Firebase Auth** para login con correo/contraseña
+- **Cloud Firestore** como persistencia principal
+- **Material 3** con tema propio y paleta corporativa
+- **Sin librerías de UI de terceros** salvo aprobación explícita
 
 ## Estructura de Archivos
 
 ```
-src/app/
-├── app.config.ts                   ← providers: router, httpClient, interceptors
-├── app.routes.ts                   ← rutas con loadComponent (lazy)
+lib/
+├── app/
+│   ├── app.dart
+│   ├── router.dart
+│   └── theme/
 ├── core/
-│   ├── interceptors/
-│   │   └── error.interceptor.ts    ← interceptor funcional de errores HTTP
-│   └── services/
-│       ├── cotizacion.service.ts   ← :8080
-│       └── core-ohs.service.ts     ← :8081
+│   ├── config/
+│   │   └── firebase_options.dart
+│   ├── firestore/
+│   ├── auth/
+│   ├── errors/
+│   └── widgets/
 ├── shared/
-│   ├── models/                     ← interfaces TypeScript del dominio
-│   └── components/                 ← componentes reutilizables standalone
+│   ├── models/
+│   └── utils/
 └── features/
-    ├── cotizador/
-    ├── general-info/
-    ├── locations/
-    ├── technical-info/
-    └── terms-and-conditions/
+    ├── auth/
+    ├── home/
+    ├── materials/
+    ├── categories/
+    ├── subproducts/
+    ├── products/
+    └── simulator/
 ```
 
-## Patron de Estado con Signals
+## Patrón de Estado con Riverpod
 
-Cada feature tiene su propio `*.state.ts` con `@Injectable({ providedIn: 'root' })`:
+Cada feature debe exponer estado con providers o notifiers.
+Preferir `AsyncNotifier` o `Notifier` para casos de carga y mutación.
 
-```typescript
-@Injectable({ providedIn: 'root' })
-export class FeatureState {
-  private _data   = signal<Cotizacion | null>(null);
-  private _loading = signal(false);
-  private _error   = signal<string | null>(null);
-
-  readonly data    = this._data.asReadonly();
-  readonly loading = this._loading.asReadonly();
-  readonly error   = this._error.asReadonly();
-  readonly isReady = computed(() => this._data() !== null && !this._loading());
+```dart
+class ProductsController extends AsyncNotifier<ProductsState> {
+  @override
+  Future<ProductsState> build() async {
+    return const ProductsState.initial();
+  }
 }
 ```
 
-**Regla**: Nunca exponer el signal mutable fuera del state service.
+Reglas:
 
-## Patrón de Lazy Loading
+- no exponer estado mutable fuera del provider;
+- separar UI de lógica de cálculo;
+- aislar llamadas a Firestore en repositorios;
+- usar `FutureProvider` o `StreamProvider` solo para lecturas simples.
 
-```typescript
-// app.routes.ts
-{
-  path: 'quotes/:folio/general-info',
-  loadComponent: () =>
-    import('./features/general-info/general-info.component')
-      .then(m => m.GeneralInfoComponent)
-}
+## Patrón de Navegación
+
+Usar `go_router` con rutas declarativas por feature.
+
+Ejemplo:
+
+```dart
+GoRoute(
+  path: '/products/:id',
+  builder: (context, state) => ProductDetailPage(productId: state.pathParameters['id']!),
+)
 ```
 
-## Interceptor Funcional de Errores
+## Firebase
 
-```typescript
-// error.interceptor.ts — interceptor funcional (no clase)
-export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  return next(req).pipe(
-    catchError((err: HttpErrorResponse) => {
-      console.error(`[HTTP Error] ${req.url}`, err.status);
-      // lógica por código de error...
-      return throwError(() => err);
-    })
-  );
-};
-```
+- Inicializar con `flutterfire configure`.
+- Consumir `firebase_options.dart` generado.
+- No hardcodear project IDs, api keys ni nombres de ambiente en la UI.
+- Encapsular acceso a Auth y Firestore en repositorios o servicios de infraestructura.
 
-## Versionado Optimista
+## UI y Sistema de Diseño
 
-Toda operación `PUT`/`PATCH` debe incluir `version` en el body:
+- La interfaz sigue `ui-design.spec.md`.
+- Prioridad: claridad, lectura rápida y taps simples para una usuaria no técnica.
+- Mobile first, luego tablet y PC.
+- Mantener jerarquía visual fuerte con tarjetas, listados compactos y acciones primarias claras.
+- El color primario es `#0C447C`.
+- Preferir `TextFormField`, `DropdownButtonFormField`, `Card`, `ListTile`, `Dialog`, `BottomSheet`, `NavigationBar` y `Drawer` solo cuando aporte valor.
+- Mantener espacios moderados; no saturar la interfaz con demasiada densidad.
 
-```typescript
-// Tomar la version del signal de estado
-const version = this.state.cotizacion()?.version ?? 0;
-this.cotizacionService.updateGeneralInfo(folio, version, payload).subscribe();
-```
+## Reglas de Formulario
 
-- `409 Conflict` → mostrar mensaje: *"La cotización fue modificada por otro proceso. Por favor recarga."*
-- `404 Not Found` → redirigir a `/cotizador`
+- Validar en el cliente antes de escribir a Firestore.
+- Mensajes cortos, específicos y visibles junto al campo.
+- No bloquear toda la pantalla por errores de validación de un campo.
+- En acciones destructivas, pedir confirmación explícita.
 
-## Tailwind CSS y Sistema de Diseño
+## Repositorios y Datos
 
-- Toda la interfaz sigue las guías descritas en **`.github/specs/ui-design.spec.md`**.
-- El estilo es corporativo B2B: máxima densidad de información, bordes limpios, sin adornos excesivos. Usar paddings pequeños como `p-2` o `p-3`, y tipografías densas (`text-sm`).
-- El color **primario es `#0C447C`**. Toda acción principal o elemento guía destacado utilizará este color (vía configuración `primary` en `tailwind.config.js`). 
-- Usar clases utilitarias de Tailwind directamente en templates HTML.
-- No crear archivos CSS por componente salvo para animaciones o estilos imposibles con Tailwind.
-- La purga de estilos no usados se realiza automáticamente al compilar.
+- Los repositorios deben traducir Firestore a modelos de dominio.
+- Usar mapeo explícito `fromMap` / `toMap`.
+- No mezclar query builders con widgets.
+- Mantener operaciones de lectura y escritura pequeñas y predecibles.
 
-## Validación de Código Postal (ubicaciones)
+## Manejo de Errores
 
-Al evento `blur` del campo `codigoPostal`:
-1. Llamar `CoreOhsService.getZipCode(cp)` → `GET /v1/zip-codes/{cp}`
-2. Si válido: autocompletar `estado`, `municipio`, `colonia`, `ciudad`, `zonaCatastrofica` via signals o FormGroup.
-3. Si inválido: mostrar error inline bajo el campo. No bloquear formulario completo.
+- Capturar `FirebaseAuthException` y `FirebaseException` donde corresponda.
+- Mostrar mensajes de negocio legibles para el usuario.
+- Los errores técnicos no deben exponerse completos en la UI.
+- Registrar logs de depuración solo en desarrollo.
+
+## Convenciones de Código
+
+- Archivos en `snake_case.dart`.
+- Clases, widgets y notifiers en `PascalCase`.
+- Métodos y variables en `camelCase`.
+- Mantener nombres de dominio consistentes con `ARCHITECTURE.md` y `DATA_MODEL.md`.
+- Evitar funciones demasiado largas; extraer helpers cuando la intención no sea clara.
 
 ## Restricciones
 
-- NO generar NgModules.
-- NO usar BehaviorSubject para estado de UI.
-- NO instalar librerías de componentes (Angular Material, PrimeNG, etc.).
-- NO crear pantalla de login, guards de autenticación ni interceptor JWT.
-- NO hacer referencia a código de backend Java en este repositorio.
-- Los URLs de los backends vienen de `environment.ts`, NUNCA hardcodeados.
+- NO usar artefactos de otro stack frontend ni templates HTML ajenos a Flutter.
+- NO instalar o introducir componentes UI de terceros sin aprobación.
+- NO crear backend propio ni servicios REST nuevos salvo que una spec lo pida explícitamente.
+- NO usar `print()` para depuración en producción.
+- NO hardcodear secretos ni llaves Firebase.
 
----
-
-> Ver `ARCHITECTURE.md` en la raíz del repositorio para la arquitectura completa, contratos de API y reglas de UI.
+> Ver `ARCHITECTURE.md` y `DATA_MODEL.md` en la raíz del repositorio para la arquitectura completa y las reglas de negocio.

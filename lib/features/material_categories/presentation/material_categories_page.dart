@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/widgets/app_back_button.dart';
 import '../application/material_categories_controller.dart';
 import '../domain/material_category.dart';
 
@@ -15,6 +16,7 @@ class MaterialCategoriesPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: const AppBackButton(),
         title: const Text('Categorías de materias primas'),
       ),
       floatingActionButton: FloatingActionButton.extended(

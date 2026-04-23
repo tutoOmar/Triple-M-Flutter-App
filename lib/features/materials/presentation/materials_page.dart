@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/formatting/display_number.dart';
+import '../../../core/widgets/app_back_button.dart';
 import '../../material_categories/application/material_categories_controller.dart';
 import '../../material_categories/domain/material_category.dart';
 import '../application/materials_controller.dart';
@@ -33,6 +35,7 @@ class _MaterialsPageState extends ConsumerState<MaterialsPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: const AppBackButton(),
         title: const Text('Materias primas'),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -337,7 +340,7 @@ class _MaterialCard extends StatelessWidget {
           ],
         ),
         subtitle: Text(
-          '$categoryName · ${material.unit} · ${material.currentPrice.toStringAsFixed(2)}',
+          '$categoryName · ${material.unit} · ${formatDisplayNumber(material.currentPrice)}',
         ),
         trailing: Wrap(
           spacing: 4,

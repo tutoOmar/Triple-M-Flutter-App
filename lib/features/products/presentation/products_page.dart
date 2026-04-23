@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/formatting/display_number.dart';
+import '../../../core/widgets/app_back_button.dart';
 import '../../material_categories/application/material_categories_controller.dart';
 import '../../material_categories/domain/material_category.dart';
 import '../../materials/application/materials_controller.dart';
@@ -57,7 +59,10 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
     final actionError = actionState.hasError ? actionState.error : null;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Productos finales')),
+      appBar: AppBar(
+        leading: const AppBackButton(),
+        title: const Text('Productos finales'),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: actionState.isLoading ? null : () => _openForm(context, ref),
         icon: const Icon(Icons.add),
@@ -134,7 +139,7 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
                                         product: product,
                                         breakdown: breakdown,
                                         busy: actionState.isLoading,
-                                        onOpenDetail: () => context.go('/products/${product.id}'),
+                                        onOpenDetail: () => context.push('/products/${product.id}'),
                                         onEdit: () => _openForm(context, ref, product: product),
                                         onDelete: () => _confirmDelete(context, ref, product),
                                       );
@@ -242,7 +247,10 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
 
                       if (product == null) {
                         return Scaffold(
-                          appBar: AppBar(title: const Text('Detalle del producto')),
+                          appBar: AppBar(
+                            leading: const AppBackButton(),
+                            title: const Text('Detalle del producto'),
+                          ),
                           body: const Center(
                             child: Padding(
                               padding: EdgeInsets.all(24),
@@ -278,12 +286,13 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
 
                       return Scaffold(
                         appBar: AppBar(
+                          leading: const AppBackButton(),
                           title: const Text('Detalle del producto'),
                           actions: [
                             IconButton(
                               onPressed: actionState.isLoading
                                   ? null
-                                  : () => context.go('/simulator?productId=${currentProduct.id}'),
+                                  : () => context.push('/simulator?productId=${currentProduct.id}'),
                               icon: const Icon(Icons.play_arrow_outlined),
                             ),
                             IconButton(
@@ -513,7 +522,7 @@ class _ProductCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Text('${product.outputUnit} · Costo unitario ${breakdown.unitCost.toStringAsFixed(2)}'),
+            Text('${product.outputUnit} · Costo unitario ${formatDisplayNumber(breakdown.unitCost)}'),
             if (product.description != null && product.description!.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(product.description!),
@@ -562,7 +571,7 @@ class _ProductSummaryCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(product.outputUnit),
             const SizedBox(height: 12),
-            Text('Costo unitario ${breakdown.unitCost.toStringAsFixed(2)}', style: Theme.of(context).textTheme.titleLarge),
+            Text('Costo unitario ${formatDisplayNumber(breakdown.unitCost)}', style: Theme.of(context).textTheme.titleLarge),
             if (product.description != null && product.description!.isNotEmpty) ...[
               const SizedBox(height: 12),
               Text(product.description!),
@@ -615,7 +624,7 @@ class _ProductComponentsCard extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 6),
-                          Text('${component.quantityPerUnit.toStringAsFixed(2)} ${component.outputUnit} · Costo ${component.subtotal.toStringAsFixed(2)}'),
+                          Text('${formatDisplayNumber(component.quantityPerUnit)} ${component.outputUnit} · Costo ${formatDisplayNumber(component.subtotal)}'),
                           if (component.notes != null && component.notes!.isNotEmpty) ...[
                             const SizedBox(height: 6),
                             Text(component.notes!),
@@ -671,7 +680,7 @@ class _QuickSimulationCard extends StatelessWidget {
               const Text('Ingresa una cantidad válida para ver el total.')
             else ...[
               Text(
-                'Costo total para ${quantityController.text} ${product.outputUnit}: ${totalForQuantity!.toStringAsFixed(2)}',
+                'Costo total para ${formatDisplayNumber(quantity)} ${product.outputUnit}: ${formatDisplayNumber(totalForQuantity!)}',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 12),
@@ -679,7 +688,7 @@ class _QuickSimulationCard extends StatelessWidget {
                 (component) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
-                    '${component.subproductName}: ${(component.quantityPerUnit * quantity).toStringAsFixed(2)} ${component.outputUnit} · ${(component.subtotal * quantity).toStringAsFixed(2)}',
+                    '${component.subproductName}: ${formatDisplayNumber(component.quantityPerUnit * quantity)} ${component.outputUnit} · ${formatDisplayNumber(component.subtotal * quantity)}',
                   ),
                 ),
               ),
@@ -1230,7 +1239,7 @@ class _ProductPreviewCard extends StatelessWidget {
         children: [
           Text('Previsualización de costo', style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 6),
-          Text('Costo unitario: ${breakdown.unitCost.toStringAsFixed(2)}', style: Theme.of(context).textTheme.titleMedium),
+          Text('Costo unitario: ${formatDisplayNumber(breakdown.unitCost)}', style: Theme.of(context).textTheme.titleMedium),
         ],
       ),
     );

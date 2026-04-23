@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/formatting/display_number.dart';
+import '../../../core/widgets/app_back_button.dart';
 import '../../material_categories/application/material_categories_controller.dart';
 import '../../materials/domain/material_item.dart';
 import '../../materials/application/materials_controller.dart';
@@ -49,6 +51,7 @@ class _ProductionSimulatorPageState extends ConsumerState<ProductionSimulatorPag
 
     return Scaffold(
       appBar: AppBar(
+        leading: const AppBackButton(),
         title: const Text('Simulador de producción'),
       ),
       body: productsAsync.when(
@@ -256,10 +259,10 @@ class _SummaryCard extends StatelessWidget {
               'Producto: ${breakdown.productName}',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
-            Text('Cantidad: ${breakdown.quantity.toStringAsFixed(2)} ${breakdown.outputUnit}'),
+            Text('Cantidad: ${formatDisplayNumber(breakdown.quantity)} ${breakdown.outputUnit}'),
             const SizedBox(height: 12),
-            Text('Costo unitario: ${breakdown.unitCost.toStringAsFixed(2)}', style: Theme.of(context).textTheme.titleLarge),
-            Text('Costo total: ${breakdown.totalCost.toStringAsFixed(2)}', style: Theme.of(context).textTheme.titleLarge),
+            Text('Costo unitario: ${formatDisplayNumber(breakdown.unitCost)}', style: Theme.of(context).textTheme.titleLarge),
+            Text('Costo total: ${formatDisplayNumber(breakdown.totalCost)}', style: Theme.of(context).textTheme.titleLarge),
           ],
         ),
       ),
@@ -292,7 +295,7 @@ class _SubproductBreakdownCard extends StatelessWidget {
                     tilePadding: EdgeInsets.zero,
                     title: Text(subproduct.subproductName),
                     subtitle: Text(
-                      '${subproduct.quantityForSimulation.toStringAsFixed(2)} ${subproduct.outputUnit} · ${subproduct.subtotal.toStringAsFixed(2)}',
+                      '${formatDisplayNumber(subproduct.quantityForSimulation)} ${subproduct.outputUnit} · ${formatDisplayNumber(subproduct.subtotal)}',
                     ),
                     children: [
                       Padding(
@@ -300,10 +303,10 @@ class _SubproductBreakdownCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Text('Cantidad por unidad de producto: ${subproduct.quantityPerProductUnit.toStringAsFixed(2)}'),
-                            Text('Costo de materiales: ${subproduct.ingredientsCost.toStringAsFixed(2)}'),
-                            Text('Costos fijos: ${subproduct.fixedCost.toStringAsFixed(2)}'),
-                            Text('Costo unitario del subproducto: ${subproduct.unitCost.toStringAsFixed(2)}'),
+                            Text('Cantidad por unidad de producto: ${formatDisplayNumber(subproduct.quantityPerProductUnit)}'),
+                            Text('Costo de materiales: ${formatDisplayNumber(subproduct.ingredientsCost)}'),
+                            Text('Costos fijos: ${formatDisplayNumber(subproduct.fixedCost)}'),
+                            Text('Costo unitario del subproducto: ${formatDisplayNumber(subproduct.unitCost)}'),
                             const SizedBox(height: 12),
                             if (subproduct.isMissing)
                               const Text('Este subproducto ya no existe.'),
@@ -311,7 +314,7 @@ class _SubproductBreakdownCard extends StatelessWidget {
                               (ingredient) => Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: Text(
-                                  '${ingredient.materialName}: ${ingredient.quantityForSimulation.toStringAsFixed(2)} ${ingredient.unit} · ${ingredient.subtotal.toStringAsFixed(2)}',
+                                  '${ingredient.materialName}: ${formatDisplayNumber(ingredient.quantityForSimulation)} ${ingredient.unit} · ${formatDisplayNumber(ingredient.subtotal)}',
                                 ),
                               ),
                             ),
@@ -370,9 +373,9 @@ class _MaterialBreakdownCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           Text('Categoría: ${material.categoryName ?? '-'}'),
-                          Text('Cantidad: ${material.quantity.toStringAsFixed(2)} ${material.unit}'),
-                          Text('Precio unitario: ${material.unitPrice.toStringAsFixed(2)}'),
-                          Text('Subtotal: ${material.subtotal.toStringAsFixed(2)}'),
+                          Text('Cantidad: ${formatDisplayNumber(material.quantity)} ${material.unit}'),
+                          Text('Precio unitario: ${formatDisplayNumber(material.unitPrice)}'),
+                          Text('Subtotal: ${formatDisplayNumber(material.subtotal)}'),
                         ],
                       ),
                     ),

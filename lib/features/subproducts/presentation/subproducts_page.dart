@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/formatting/display_number.dart';
+import '../../../core/widgets/app_back_button.dart';
 import '../../material_categories/application/material_categories_controller.dart';
 import '../../material_categories/domain/material_category.dart';
 import '../../materials/application/materials_controller.dart';
@@ -21,6 +23,7 @@ class SubproductsPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: const AppBackButton(),
         title: const Text('Subproductos'),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -248,7 +251,7 @@ class _SubproductCard extends StatelessWidget {
           ],
         ),
         subtitle: Text(
-          '${subproduct.outputUnit} · Costo ${breakdown.totalCost.toStringAsFixed(2)}',
+          '${subproduct.outputUnit} · Costo ${formatDisplayNumber(breakdown.totalCost)}',
         ),
         trailing: Wrap(
           spacing: 4,
@@ -283,7 +286,7 @@ class _SubproductCard extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               title: Text(item.materialName),
               subtitle: Text(
-                '${item.quantityPerUnit} ${item.unit} x ${item.unitPrice.toStringAsFixed(2)} = ${item.subtotal.toStringAsFixed(2)}'
+                '${formatDisplayNumber(item.quantityPerUnit)} ${item.unit} x ${formatDisplayNumber(item.unitPrice)} = ${formatDisplayNumber(item.subtotal)}'
                 '${item.categoryName == null ? '' : ' · ${item.categoryName}'}',
               ),
               trailing: item.isMissing ? const Icon(Icons.warning_amber_outlined) : null,
@@ -334,11 +337,11 @@ class _CostSummary extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Costo de materiales: ${breakdown.ingredientsCost.toStringAsFixed(2)}'),
-          Text('Costos fijos: ${breakdown.fixedCost.toStringAsFixed(2)}'),
+          Text('Costo de materiales: ${formatDisplayNumber(breakdown.ingredientsCost)}'),
+          Text('Costos fijos: ${formatDisplayNumber(breakdown.fixedCost)}'),
           const SizedBox(height: 4),
           Text(
-            'Costo total: ${breakdown.totalCost.toStringAsFixed(2)}',
+            'Costo total: ${formatDisplayNumber(breakdown.totalCost)}',
             style: Theme.of(context).textTheme.titleSmall,
           ),
         ],
@@ -859,7 +862,7 @@ class _IngredientRow extends StatelessWidget {
 
   String _materialLabel(MaterialItem material, Map<String, String> categoryNamesById) {
     final categoryName = categoryNamesById[material.categoryId];
-    final baseLabel = '${material.name} · ${material.unit} · ${material.currentPrice.toStringAsFixed(2)}';
+    final baseLabel = '${material.name} · ${material.unit} · ${formatDisplayNumber(material.currentPrice)}';
     if (categoryName == null) {
       return baseLabel;
     }
@@ -886,10 +889,10 @@ class _SubproductPreviewCard extends StatelessWidget {
         children: [
           Text('Previsualización de costo', style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 6),
-          Text('Materiales: ${breakdown.ingredientsCost.toStringAsFixed(2)}'),
-          Text('Costos fijos: ${breakdown.fixedCost.toStringAsFixed(2)}'),
+          Text('Materiales: ${formatDisplayNumber(breakdown.ingredientsCost)}'),
+          Text('Costos fijos: ${formatDisplayNumber(breakdown.fixedCost)}'),
           Text(
-            'Total: ${breakdown.totalCost.toStringAsFixed(2)}',
+            'Total: ${formatDisplayNumber(breakdown.totalCost)}',
             style: Theme.of(context).textTheme.titleMedium,
           ),
         ],

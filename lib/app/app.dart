@@ -13,7 +13,7 @@ class MiApp extends ConsumerWidget {
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: 'Mi App',
+      title: 'Triple M Productos',
       theme: AppTheme.light(),
       routerConfig: router,
     );

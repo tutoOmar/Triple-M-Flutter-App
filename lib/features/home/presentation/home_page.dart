@@ -3,92 +3,128 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../auth/application/auth_controller.dart';
+import '../../../core/widgets/app_back_button.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authServiceProvider).currentUser;
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mi App'),
+        leading: const AppBackButton(),
+        title: const Text('Triple M Productos'),
         actions: [
-          TextButton(
-            onPressed: () => context.go('/material-categories'),
-            child: const Text('Categorías'),
-          ),
-          TextButton(
-            onPressed: () => context.go('/materials'),
-            child: const Text('Materias'),
-          ),
-          TextButton(
-            onPressed: () => context.go('/subproducts'),
-            child: const Text('Subproductos'),
-          ),
-          TextButton(
-            onPressed: () => context.go('/products'),
-            child: const Text('Productos'),
-          ),
-          TextButton(
-            onPressed: () => context.go('/simulator'),
-            child: const Text('Simulador'),
-          ),
           TextButton(
             onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
             child: const Text('Salir'),
           ),
         ],
       ),
-      body: Center(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final columns = constraints.maxWidth >= 900
+                ? 3
+                : constraints.maxWidth >= 600
+                    ? 2
+                    : 1;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Triple M Productos',
+                  style: Theme.of(context).textTheme.displaySmall,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Accede a los módulos principales del negocio.',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                GridView.count(
+                  crossAxisCount: columns,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  mainAxisExtent: 152,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _HomeCard(
+                      emoji: '🏷️',
+                      title: 'Categorías',
+                      subtitle: 'Clasifica materias primas',
+                      onTap: () => context.push('/material-categories'),
+                    ),
+                    _HomeCard(
+                      emoji: '🧵',
+                      title: 'Materias primas',
+                      subtitle: 'Administra costos y unidades',
+                      onTap: () => context.push('/materials'),
+                    ),
+                    _HomeCard(
+                      emoji: '🧩',
+                      title: 'Subproductos',
+                      subtitle: 'Define recetas y costos fijos',
+                      onTap: () => context.push('/subproducts'),
+                    ),
+                    _HomeCard(
+                      emoji: '📦',
+                      title: 'Productos',
+                      subtitle: 'Compón productos finales',
+                      onTap: () => context.push('/products'),
+                    ),
+                    _HomeCard(
+                      emoji: '🧮',
+                      title: 'Simulador',
+                      subtitle: 'Calcula producción por cantidad',
+                      onTap: () => context.push('/simulator'),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeCard extends StatelessWidget {
+  const _HomeCard({
+    required this.emoji,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final String emoji;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(18),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Sesión iniciada',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                user?.email ?? 'Usuario autenticado',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'La base Firebase ya está lista. Ahora puedes construir los módulos de materias primas, subproductos, productos finales y simulador por archivos separados.',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                alignment: WrapAlignment.center,
-                children: [
-                  FilledButton(
-                    onPressed: () => context.go('/material-categories'),
-                    child: const Text('Abrir categorías de materias primas'),
-                  ),
-                  FilledButton.tonal(
-                    onPressed: () => context.go('/materials'),
-                    child: const Text('Abrir materias primas'),
-                  ),
-                  FilledButton.tonal(
-                    onPressed: () => context.go('/subproducts'),
-                    child: const Text('Abrir subproductos'),
-                  ),
-                  FilledButton.tonal(
-                    onPressed: () => context.go('/products'),
-                    child: const Text('Abrir productos'),
-                  ),
-                  FilledButton.tonal(
-                    onPressed: () => context.go('/simulator'),
-                    child: const Text('Abrir simulador'),
-                  ),
-                ],
-              ),
+              Text(emoji, style: const TextStyle(fontSize: 30)),
+              const SizedBox(height: 12),
+              Text(title, style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 6),
+              Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
         ),

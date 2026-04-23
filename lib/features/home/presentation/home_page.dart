@@ -24,6 +24,10 @@ class HomePage extends ConsumerWidget {
             child: const Text('Materias'),
           ),
           TextButton(
+            onPressed: () => context.go('/subproducts'),
+            child: const Text('Subproductos'),
+          ),
+          TextButton(
             onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
             child: const Text('Salir'),
           ),
@@ -62,6 +66,10 @@ class HomePage extends ConsumerWidget {
                   FilledButton.tonal(
                     onPressed: () => context.go('/materials'),
                     child: const Text('Abrir materias primas'),
+                  ),
+                  FilledButton.tonal(
+                    onPressed: () => context.go('/subproducts'),
+                    child: const Text('Abrir subproductos'),
                   ),
                 ],
               ),

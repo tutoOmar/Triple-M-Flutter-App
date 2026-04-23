@@ -9,6 +9,7 @@ import '../core/firebase/firebase_providers.dart';
 import '../features/material_categories/presentation/material_categories_page.dart';
 import '../features/auth/presentation/login_page.dart';
 import '../features/home/presentation/home_page.dart';
+import '../features/materials/presentation/materials_page.dart';
 
 final authStateChangesProvider = StreamProvider<User?>((ref) {
   final auth = ref.watch(firebaseAuthProvider);
@@ -53,6 +54,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/material-categories',
         builder: (context, state) => const MaterialCategoriesPage(),
+      ),
+      GoRoute(
+        path: '/materials',
+        builder: (context, state) => const MaterialsPage(),
       ),
     ],
   );

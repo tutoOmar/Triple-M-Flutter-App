@@ -20,6 +20,10 @@ class HomePage extends ConsumerWidget {
             child: const Text('Categorías'),
           ),
           TextButton(
+            onPressed: () => context.go('/materials'),
+            child: const Text('Materias'),
+          ),
+          TextButton(
             onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
             child: const Text('Salir'),
           ),
@@ -46,9 +50,20 @@ class HomePage extends ConsumerWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              FilledButton(
-                onPressed: () => context.go('/material-categories'),
-                child: const Text('Abrir categorías de materias primas'),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                alignment: WrapAlignment.center,
+                children: [
+                  FilledButton(
+                    onPressed: () => context.go('/material-categories'),
+                    child: const Text('Abrir categorías de materias primas'),
+                  ),
+                  FilledButton.tonal(
+                    onPressed: () => context.go('/materials'),
+                    child: const Text('Abrir materias primas'),
+                  ),
+                ],
               ),
             ],
           ),

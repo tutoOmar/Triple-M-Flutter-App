@@ -1,5 +1,5 @@
 ---
-status: DRAFT
+status: IMPLEMENTED
 feature: materials
 author: spec-generator
 created: 2026-04-22

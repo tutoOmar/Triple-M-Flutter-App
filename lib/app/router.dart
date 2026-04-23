@@ -11,6 +11,7 @@ import '../features/auth/presentation/login_page.dart';
 import '../features/home/presentation/home_page.dart';
 import '../features/materials/presentation/materials_page.dart';
 import '../features/products/presentation/products_page.dart';
+import '../features/simulator/presentation/production_simulator_page.dart';
 import '../features/subproducts/presentation/subproducts_page.dart';
 
 final authStateChangesProvider = StreamProvider<User?>((ref) {
@@ -69,6 +70,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/products/:id',
         builder: (context, state) => ProductDetailPage(
           productId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: '/simulator',
+        builder: (context, state) => ProductionSimulatorPage(
+          initialProductId: state.uri.queryParameters['productId'],
         ),
       ),
       GoRoute(

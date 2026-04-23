@@ -283,6 +283,12 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                             IconButton(
                               onPressed: actionState.isLoading
                                   ? null
+                                  : () => context.go('/simulator?productId=${currentProduct.id}'),
+                              icon: const Icon(Icons.play_arrow_outlined),
+                            ),
+                            IconButton(
+                              onPressed: actionState.isLoading
+                                  ? null
                                   : () => _openForm(context, ref, product: currentProduct),
                               icon: const Icon(Icons.edit_outlined),
                             ),

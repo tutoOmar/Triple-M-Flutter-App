@@ -1,5 +1,5 @@
 ---
-status: APPROVED
+status: IMPLEMENTED
 feature: production-simulator
 author: spec-generator
 created: 2026-04-22

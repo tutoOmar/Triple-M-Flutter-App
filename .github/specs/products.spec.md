@@ -1,5 +1,5 @@
 ---
-status: DRAFT
+status: APPROVED
 feature: products
 author: spec-generator
 created: 2026-04-22

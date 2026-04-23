@@ -10,6 +10,7 @@ import '../features/material_categories/presentation/material_categories_page.da
 import '../features/auth/presentation/login_page.dart';
 import '../features/home/presentation/home_page.dart';
 import '../features/materials/presentation/materials_page.dart';
+import '../features/products/presentation/products_page.dart';
 import '../features/subproducts/presentation/subproducts_page.dart';
 
 final authStateChangesProvider = StreamProvider<User?>((ref) {
@@ -59,6 +60,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/materials',
         builder: (context, state) => const MaterialsPage(),
+      ),
+      GoRoute(
+        path: '/products',
+        builder: (context, state) => const ProductsPage(),
+      ),
+      GoRoute(
+        path: '/products/:id',
+        builder: (context, state) => ProductDetailPage(
+          productId: state.pathParameters['id']!,
+        ),
       ),
       GoRoute(
         path: '/subproducts',

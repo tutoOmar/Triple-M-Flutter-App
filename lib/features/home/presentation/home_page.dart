@@ -28,6 +28,10 @@ class HomePage extends ConsumerWidget {
             child: const Text('Subproductos'),
           ),
           TextButton(
+            onPressed: () => context.go('/products'),
+            child: const Text('Productos'),
+          ),
+          TextButton(
             onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
             child: const Text('Salir'),
           ),
@@ -50,7 +54,7 @@ class HomePage extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               const Text(
-                'La base Firebase ya está lista. Ahora puedes construir los módulos de materias primas, subproductos, productos y simulador por archivos separados.',
+                'La base Firebase ya está lista. Ahora puedes construir los módulos de materias primas, subproductos, productos finales y simulador por archivos separados.',
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
@@ -70,6 +74,10 @@ class HomePage extends ConsumerWidget {
                   FilledButton.tonal(
                     onPressed: () => context.go('/subproducts'),
                     child: const Text('Abrir subproductos'),
+                  ),
+                  FilledButton.tonal(
+                    onPressed: () => context.go('/products'),
+                    child: const Text('Abrir productos'),
                   ),
                 ],
               ),

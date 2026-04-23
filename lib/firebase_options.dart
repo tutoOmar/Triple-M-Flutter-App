@@ -40,49 +40,196 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDClMc42TrdCB_1V8GkmVLRLegDwizHI7s',
-    appId: '1:269474518191:web:35e7790cea90df4af5f05a',
-    messagingSenderId: '269474518191',
-    projectId: 'triple-m-1bda1',
-    authDomain: 'triple-m-1bda1.firebaseapp.com',
-    storageBucket: 'triple-m-1bda1.firebasestorage.app',
-    measurementId: 'G-Z0J88CHMSK',
-  );
+    static final FirebaseOptions web = FirebaseOptions(
+      apiKey: _requiredValue(
+        const String.fromEnvironment(_webApiKeyName),
+        _webApiKeyName,
+      ),
+      appId: _requiredValue(
+        const String.fromEnvironment(_webAppIdName),
+        _webAppIdName,
+      ),
+      messagingSenderId: _requiredValue(
+        const String.fromEnvironment(_webMessagingSenderIdName),
+        _webMessagingSenderIdName,
+      ),
+      projectId: _requiredValue(
+        const String.fromEnvironment(_webProjectIdName),
+        _webProjectIdName,
+      ),
+      authDomain: _requiredValue(
+        const String.fromEnvironment(_webAuthDomainName),
+        _webAuthDomainName,
+      ),
+      storageBucket: _requiredValue(
+        const String.fromEnvironment(_webStorageBucketName),
+        _webStorageBucketName,
+      ),
+      measurementId: _requiredValue(
+        const String.fromEnvironment(_webMeasurementIdName),
+        _webMeasurementIdName,
+      ),
+    );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAdl5dZcH-riA_gBFUVc2Yw0ZA39IzG-ck',
-    appId: '1:269474518191:android:671340a53678c1e2f5f05a',
-    messagingSenderId: '269474518191',
-    projectId: 'triple-m-1bda1',
-    storageBucket: 'triple-m-1bda1.firebasestorage.app',
-  );
+    static final FirebaseOptions android = FirebaseOptions(
+      apiKey: _requiredValue(
+        const String.fromEnvironment(_androidApiKeyName),
+        _androidApiKeyName,
+      ),
+      appId: _requiredValue(
+        const String.fromEnvironment(_androidAppIdName),
+        _androidAppIdName,
+      ),
+      messagingSenderId: _requiredValue(
+        const String.fromEnvironment(_androidMessagingSenderIdName),
+        _androidMessagingSenderIdName,
+      ),
+      projectId: _requiredValue(
+        const String.fromEnvironment(_androidProjectIdName),
+        _androidProjectIdName,
+      ),
+      storageBucket: _requiredValue(
+        const String.fromEnvironment(_androidStorageBucketName),
+        _androidStorageBucketName,
+      ),
+    );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDxKxBtch2OvHM-JgQyqbZrCgqCCUsGL9g',
-    appId: '1:269474518191:ios:e536b919757be97cf5f05a',
-    messagingSenderId: '269474518191',
-    projectId: 'triple-m-1bda1',
-    storageBucket: 'triple-m-1bda1.firebasestorage.app',
-    iosBundleId: 'com.example.miApp',
-  );
+    static final FirebaseOptions ios = FirebaseOptions(
+      apiKey: _requiredValue(
+        const String.fromEnvironment(_iosApiKeyName),
+        _iosApiKeyName,
+      ),
+      appId: _requiredValue(
+        const String.fromEnvironment(_iosAppIdName),
+        _iosAppIdName,
+      ),
+      messagingSenderId: _requiredValue(
+        const String.fromEnvironment(_iosMessagingSenderIdName),
+        _iosMessagingSenderIdName,
+      ),
+      projectId: _requiredValue(
+        const String.fromEnvironment(_iosProjectIdName),
+        _iosProjectIdName,
+      ),
+      storageBucket: _requiredValue(
+        const String.fromEnvironment(_iosStorageBucketName),
+        _iosStorageBucketName,
+      ),
+      iosBundleId: _requiredValue(
+        const String.fromEnvironment(_iosBundleIdName),
+        _iosBundleIdName,
+      ),
+    );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDxKxBtch2OvHM-JgQyqbZrCgqCCUsGL9g',
-    appId: '1:269474518191:ios:e536b919757be97cf5f05a',
-    messagingSenderId: '269474518191',
-    projectId: 'triple-m-1bda1',
-    storageBucket: 'triple-m-1bda1.firebasestorage.app',
-    iosBundleId: 'com.example.miApp',
-  );
+    static final FirebaseOptions macos = FirebaseOptions(
+      apiKey: _requiredValue(
+        const String.fromEnvironment(_macosApiKeyName),
+        _macosApiKeyName,
+      ),
+      appId: _requiredValue(
+        const String.fromEnvironment(_macosAppIdName),
+        _macosAppIdName,
+      ),
+      messagingSenderId: _requiredValue(
+        const String.fromEnvironment(_macosMessagingSenderIdName),
+        _macosMessagingSenderIdName,
+      ),
+      projectId: _requiredValue(
+        const String.fromEnvironment(_macosProjectIdName),
+        _macosProjectIdName,
+      ),
+      storageBucket: _requiredValue(
+        const String.fromEnvironment(_macosStorageBucketName),
+        _macosStorageBucketName,
+      ),
+      iosBundleId: _requiredValue(
+        const String.fromEnvironment(_macosBundleIdName),
+        _macosBundleIdName,
+      ),
+    );
 
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDClMc42TrdCB_1V8GkmVLRLegDwizHI7s',
-    appId: '1:269474518191:web:33ff627834f2069bf5f05a',
-    messagingSenderId: '269474518191',
-    projectId: 'triple-m-1bda1',
-    authDomain: 'triple-m-1bda1.firebaseapp.com',
-    storageBucket: 'triple-m-1bda1.firebasestorage.app',
-    measurementId: 'G-LSYNYCXNH7',
-  );
+    static final FirebaseOptions windows = FirebaseOptions(
+      apiKey: _requiredValue(
+        const String.fromEnvironment(_windowsApiKeyName),
+        _windowsApiKeyName,
+      ),
+      appId: _requiredValue(
+        const String.fromEnvironment(_windowsAppIdName),
+        _windowsAppIdName,
+      ),
+      messagingSenderId: _requiredValue(
+        const String.fromEnvironment(_windowsMessagingSenderIdName),
+        _windowsMessagingSenderIdName,
+      ),
+      projectId: _requiredValue(
+        const String.fromEnvironment(_windowsProjectIdName),
+        _windowsProjectIdName,
+      ),
+      authDomain: _requiredValue(
+        const String.fromEnvironment(_windowsAuthDomainName),
+        _windowsAuthDomainName,
+      ),
+      storageBucket: _requiredValue(
+        const String.fromEnvironment(_windowsStorageBucketName),
+        _windowsStorageBucketName,
+      ),
+      measurementId: _requiredValue(
+        const String.fromEnvironment(_windowsMeasurementIdName),
+        _windowsMeasurementIdName,
+      ),
+    );
+
+    static const String _webApiKeyName = 'FIREBASE_WEB_API_KEY';
+    static const String _webAppIdName = 'FIREBASE_WEB_APP_ID';
+    static const String _webMessagingSenderIdName =
+        'FIREBASE_WEB_MESSAGING_SENDER_ID';
+    static const String _webProjectIdName = 'FIREBASE_WEB_PROJECT_ID';
+    static const String _webAuthDomainName = 'FIREBASE_WEB_AUTH_DOMAIN';
+    static const String _webStorageBucketName = 'FIREBASE_WEB_STORAGE_BUCKET';
+    static const String _webMeasurementIdName = 'FIREBASE_WEB_MEASUREMENT_ID';
+
+    static const String _androidApiKeyName = 'FIREBASE_ANDROID_API_KEY';
+    static const String _androidAppIdName = 'FIREBASE_ANDROID_APP_ID';
+    static const String _androidMessagingSenderIdName =
+        'FIREBASE_ANDROID_MESSAGING_SENDER_ID';
+    static const String _androidProjectIdName = 'FIREBASE_ANDROID_PROJECT_ID';
+    static const String _androidStorageBucketName =
+        'FIREBASE_ANDROID_STORAGE_BUCKET';
+
+    static const String _iosApiKeyName = 'FIREBASE_IOS_API_KEY';
+    static const String _iosAppIdName = 'FIREBASE_IOS_APP_ID';
+    static const String _iosMessagingSenderIdName =
+        'FIREBASE_IOS_MESSAGING_SENDER_ID';
+    static const String _iosProjectIdName = 'FIREBASE_IOS_PROJECT_ID';
+    static const String _iosStorageBucketName = 'FIREBASE_IOS_STORAGE_BUCKET';
+    static const String _iosBundleIdName = 'FIREBASE_IOS_BUNDLE_ID';
+
+    static const String _macosApiKeyName = 'FIREBASE_IOS_API_KEY';
+    static const String _macosAppIdName = 'FIREBASE_IOS_APP_ID';
+    static const String _macosMessagingSenderIdName =
+        'FIREBASE_IOS_MESSAGING_SENDER_ID';
+    static const String _macosProjectIdName = 'FIREBASE_IOS_PROJECT_ID';
+    static const String _macosStorageBucketName = 'FIREBASE_IOS_STORAGE_BUCKET';
+    static const String _macosBundleIdName = 'FIREBASE_IOS_BUNDLE_ID';
+
+    static const String _windowsApiKeyName = 'FIREBASE_WINDOWS_API_KEY';
+    static const String _windowsAppIdName = 'FIREBASE_WINDOWS_APP_ID';
+    static const String _windowsMessagingSenderIdName =
+        'FIREBASE_WINDOWS_MESSAGING_SENDER_ID';
+    static const String _windowsProjectIdName = 'FIREBASE_WINDOWS_PROJECT_ID';
+    static const String _windowsAuthDomainName = 'FIREBASE_WINDOWS_AUTH_DOMAIN';
+    static const String _windowsStorageBucketName =
+        'FIREBASE_WINDOWS_STORAGE_BUCKET';
+    static const String _windowsMeasurementIdName =
+        'FIREBASE_WINDOWS_MEASUREMENT_ID';
+
+    static String _requiredValue(String value, String keyName) {
+      if (value.isEmpty) {
+        throw StateError(
+          'Missing Firebase config value for $keyName. Copy .env.example to .env '
+          'and build with --dart-define-from-file=.env.',
+        );
+      }
+      return value;
+    }
 }

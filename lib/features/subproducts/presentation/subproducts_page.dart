@@ -278,7 +278,7 @@ class _SubproductCard extends StatelessWidget {
             ),
           _CostSummary(breakdown: breakdown),
           const SizedBox(height: 12),
-          Text('Ingredientes', style: Theme.of(context).textTheme.titleSmall),
+          Text('Material', style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 8),
           ...breakdown.ingredientCosts.map(
             (item) => ListTile(
@@ -520,6 +520,7 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
     final materialsById = {for (final material in widget.materials) material.id: material};
     final categoriesById = {for (final category in widget.categories) category.id: category.name};
     final breakdown = _previewBreakdown(materialsById, categoriesById);
+    final isNarrowLayout = MediaQuery.sizeOf(context).width < 600;
 
     return AlertDialog(
       title: Text(widget.subproduct == null ? 'Nuevo subproducto' : 'Editar subproducto'),
@@ -565,36 +566,61 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
                   },
                 ),
                 const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _manufacturaController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        decoration: const InputDecoration(labelText: 'Coste manufactura'),
-                        validator: _decimalValidator,
+                isNarrowLayout
+                    ? Column(
+                        children: [
+                          TextFormField(
+                            controller: _manufacturaController,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            decoration: const InputDecoration(labelText: 'Coste manufactura'),
+                            validator: _decimalValidator,
+                          ),
+                          const SizedBox(height: 12),
+                          TextFormField(
+                            controller: _patinajejeController,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            decoration: const InputDecoration(labelText: 'Coste patinaje'),
+                            validator: _decimalValidator,
+                          ),
+                          const SizedBox(height: 12),
+                          TextFormField(
+                            controller: _armadoBolsillosController,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            decoration: const InputDecoration(labelText: 'Coste armado bolsillos'),
+                            validator: _decimalValidator,
+                          ),
+                        ],
+                      )
+                    : Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _manufacturaController,
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              decoration: const InputDecoration(labelText: 'Coste manufactura'),
+                              validator: _decimalValidator,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _patinajejeController,
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              decoration: const InputDecoration(labelText: 'Coste patinaje'),
+                              validator: _decimalValidator,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _armadoBolsillosController,
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              decoration: const InputDecoration(labelText: 'Coste armado bolsillos'),
+                              validator: _decimalValidator,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _patinajejeController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        decoration: const InputDecoration(labelText: 'Coste paginaje'),
-                        validator: _decimalValidator,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _armadoBolsillosController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        decoration: const InputDecoration(labelText: 'Coste armado bolsillos'),
-                        validator: _decimalValidator,
-                      ),
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 12),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
@@ -606,7 +632,7 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Ingredientes', style: Theme.of(context).textTheme.titleMedium),
+                    Text('Materiales', style: Theme.of(context).textTheme.titleMedium),
                     TextButton.icon(
                       onPressed: () {
                         final draft = _IngredientDraft();
@@ -623,7 +649,7 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
                         });
                       },
                       icon: const Icon(Icons.add),
-                      label: const Text('Agregar ingrediente'),
+                      label: const Text('Agregar Material'),
                     ),
                   ],
                 ),
@@ -849,11 +875,6 @@ class _IngredientRow extends StatelessWidget {
                 return null;
               },
             ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: draft.notesController,
-              decoration: const InputDecoration(labelText: 'Notas (opcional)'),
-            ),
           ],
         ),
       ),
@@ -862,11 +883,11 @@ class _IngredientRow extends StatelessWidget {
 
   String _materialLabel(MaterialItem material, Map<String, String> categoryNamesById) {
     final categoryName = categoryNamesById[material.categoryId];
-    final baseLabel = '${material.name} · ${material.unit} · ${formatDisplayNumber(material.currentPrice)}';
+    final baseLabel = '${material.name}';
     if (categoryName == null) {
       return baseLabel;
     }
-    return '$baseLabel · $categoryName';
+    return '$baseLabel';
   }
 }
 

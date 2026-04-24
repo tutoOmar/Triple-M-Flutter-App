@@ -55,10 +55,16 @@ class HomePage extends ConsumerWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
                     _HomeCard(
-                      emoji: '🏷️',
-                      title: 'Categorías',
-                      subtitle: 'Clasifica materias primas',
-                      onTap: () => context.push('/material-categories'),
+                      emoji: '🧮',
+                      title: 'Simulador',
+                      subtitle: 'Calcula producción por cantidad',
+                      onTap: () => context.push('/simulator'),
+                    ),
+                                        _HomeCard(
+                      emoji: '📦',
+                      title: 'Productos',
+                      subtitle: 'Compón productos finales',
+                      onTap: () => context.push('/products'),
                     ),
                     _HomeCard(
                       emoji: '🧵',
@@ -73,16 +79,10 @@ class HomePage extends ConsumerWidget {
                       onTap: () => context.push('/subproducts'),
                     ),
                     _HomeCard(
-                      emoji: '📦',
-                      title: 'Productos',
-                      subtitle: 'Compón productos finales',
-                      onTap: () => context.push('/products'),
-                    ),
-                    _HomeCard(
-                      emoji: '🧮',
-                      title: 'Simulador',
-                      subtitle: 'Calcula producción por cantidad',
-                      onTap: () => context.push('/simulator'),
+                      emoji: '🏷️',
+                      title: 'Categorías',
+                      subtitle: 'Clasifica materias primas',
+                      onTap: () => context.push('/material-categories'),
                     ),
                   ],
                 ),

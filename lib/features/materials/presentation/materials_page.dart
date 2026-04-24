@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/formatting/display_number.dart';
+import '../../../core/formatting/money_text_input_formatter.dart';
 import '../../../core/widgets/app_back_button.dart';
 import '../../material_categories/application/material_categories_controller.dart';
 import '../../material_categories/domain/material_category.dart';
@@ -464,7 +466,7 @@ class _MaterialFormDialogState extends State<_MaterialFormDialog> {
     _nameController = TextEditingController(text: widget.material?.name ?? '');
     _unitController = TextEditingController(text: widget.material?.unit ?? '');
     _priceController = TextEditingController(
-      text: widget.material == null ? '' : widget.material!.currentPrice.toString(),
+      text: widget.material == null ? '' : formatDisplayNumber(widget.material!.currentPrice, fractionDigits: 0),
     );
     _notesController = TextEditingController(text: widget.material?.notes ?? '');
     _isActive = widget.material?.isActive ?? true;
@@ -541,10 +543,11 @@ class _MaterialFormDialogState extends State<_MaterialFormDialog> {
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _priceController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: const [MoneyTextInputFormatter()],
                   decoration: const InputDecoration(labelText: 'Precio actual'),
                   validator: (value) {
-                    final parsed = double.tryParse((value ?? '').replaceAll(',', '.'));
+                    final parsed = parseMoneyText(value ?? '');
                     if (parsed == null) {
                       return 'Ingresa un precio válido.';
                     }
@@ -589,7 +592,7 @@ class _MaterialFormDialogState extends State<_MaterialFormDialog> {
                 name: _nameController.text.trim(),
                 categoryId: _categoryId ?? '',
                 unit: _unitController.text.trim(),
-                currentPrice: double.parse(_priceController.text.replaceAll(',', '.')),
+                currentPrice: parseMoneyText(_priceController.text)?.toDouble() ?? 0,
                 isActive: _isActive,
                 notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
               ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/formatting/display_number.dart';
+import '../../../core/formatting/money_text_input_formatter.dart';
 import '../../../core/widgets/app_back_button.dart';
 import '../../material_categories/application/material_categories_controller.dart';
 import '../../material_categories/domain/material_category.dart';
@@ -463,9 +465,9 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
     _nameController = TextEditingController(text: widget.subproduct?.name ?? '');
     _descriptionController = TextEditingController(text: widget.subproduct?.description ?? '');
     _outputUnitController = TextEditingController(text: widget.subproduct?.outputUnit ?? '');
-    _manufacturaController = TextEditingController(text: _stringFor(widget.subproduct?.manufacturaCost));
-    _patinajejeController = TextEditingController(text: _stringFor(widget.subproduct?.patinajejeCost));
-    _armadoBolsillosController = TextEditingController(text: _stringFor(widget.subproduct?.armadoBolsillosCost));
+    _manufacturaController = TextEditingController(text: _moneyText(widget.subproduct?.manufacturaCost));
+    _patinajejeController = TextEditingController(text: _moneyText(widget.subproduct?.patinajejeCost));
+    _armadoBolsillosController = TextEditingController(text: _moneyText(widget.subproduct?.armadoBolsillosCost));
     _isActive = widget.subproduct?.isActive ?? true;
     _ingredients = widget.subproduct?.ingredients
             .map(
@@ -571,23 +573,26 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
                         children: [
                           TextFormField(
                             controller: _manufacturaController,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: const [MoneyTextInputFormatter()],
                             decoration: const InputDecoration(labelText: 'Coste manufactura'),
-                            validator: _decimalValidator,
+                            validator: _integerValidator,
                           ),
                           const SizedBox(height: 12),
                           TextFormField(
                             controller: _patinajejeController,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: const [MoneyTextInputFormatter()],
                             decoration: const InputDecoration(labelText: 'Coste patinaje'),
-                            validator: _decimalValidator,
+                            validator: _integerValidator,
                           ),
                           const SizedBox(height: 12),
                           TextFormField(
                             controller: _armadoBolsillosController,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: const [MoneyTextInputFormatter()],
                             decoration: const InputDecoration(labelText: 'Coste armado bolsillos'),
-                            validator: _decimalValidator,
+                            validator: _integerValidator,
                           ),
                         ],
                       )
@@ -596,27 +601,30 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
                           Expanded(
                             child: TextFormField(
                               controller: _manufacturaController,
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: const [MoneyTextInputFormatter()],
                               decoration: const InputDecoration(labelText: 'Coste manufactura'),
-                              validator: _decimalValidator,
+                              validator: _integerValidator,
                             ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: TextFormField(
                               controller: _patinajejeController,
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: const [MoneyTextInputFormatter()],
                               decoration: const InputDecoration(labelText: 'Coste patinaje'),
-                              validator: _decimalValidator,
+                              validator: _integerValidator,
                             ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: TextFormField(
                               controller: _armadoBolsillosController,
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: const [MoneyTextInputFormatter()],
                               decoration: const InputDecoration(labelText: 'Coste armado bolsillos'),
-                              validator: _decimalValidator,
+                              validator: _integerValidator,
                             ),
                           ),
                         ],
@@ -738,9 +746,9 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
                           ? null
                           : _descriptionController.text.trim(),
                       outputUnit: _outputUnitController.text.trim(),
-                      manufacturaCost: double.parse(_manufacturaController.text.replaceAll(',', '.')),
-                      patinajejeCost: double.parse(_patinajejeController.text.replaceAll(',', '.')),
-                      armadoBolsillosCost: double.parse(_armadoBolsillosController.text.replaceAll(',', '.')),
+                      manufacturaCost: parseMoneyText(_manufacturaController.text)?.toDouble() ?? 0,
+                      patinajejeCost: parseMoneyText(_patinajejeController.text)?.toDouble() ?? 0,
+                      armadoBolsillosCost: parseMoneyText(_armadoBolsillosController.text)?.toDouble() ?? 0,
                       isActive: _isActive,
                       ingredients: ingredients,
                     ),
@@ -752,8 +760,8 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
     );
   }
 
-  String? _decimalValidator(String? value) {
-    final parsed = double.tryParse((value ?? '').replaceAll(',', '.'));
+  String? _integerValidator(String? value) {
+    final parsed = parseMoneyText(value ?? '');
     if (parsed == null) {
       return 'Ingresa un número válido.';
     }
@@ -782,17 +790,17 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
       ingredients: ingredients,
       materialsById: materialsById,
       categoryNamesById: categoriesById,
-      manufacturaCost: double.tryParse(_manufacturaController.text.replaceAll(',', '.')) ?? 0,
-      patinajejeCost: double.tryParse(_patinajejeController.text.replaceAll(',', '.')) ?? 0,
-      armadoBolsillosCost: double.tryParse(_armadoBolsillosController.text.replaceAll(',', '.')) ?? 0,
+      manufacturaCost: parseMoneyText(_manufacturaController.text)?.toDouble() ?? 0,
+      patinajejeCost: parseMoneyText(_patinajejeController.text)?.toDouble() ?? 0,
+      armadoBolsillosCost: parseMoneyText(_armadoBolsillosController.text)?.toDouble() ?? 0,
     );
   }
 
-  String _stringFor(double? value) {
+  String _moneyText(double? value) {
     if (value == null) {
       return '';
     }
-    return value.toString();
+    return formatDisplayNumber(value, fractionDigits: 0);
   }
 }
 
@@ -883,11 +891,11 @@ class _IngredientRow extends StatelessWidget {
 
   String _materialLabel(MaterialItem material, Map<String, String> categoryNamesById) {
     final categoryName = categoryNamesById[material.categoryId];
-    final baseLabel = '${material.name}';
+    final baseLabel = material.name;
     if (categoryName == null) {
       return baseLabel;
     }
-    return '$baseLabel';
+    return baseLabel;
   }
 }
 

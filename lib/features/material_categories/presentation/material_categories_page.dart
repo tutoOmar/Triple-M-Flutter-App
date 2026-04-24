@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/widgets/app_dialog_transitions.dart';
+import '../../../core/widgets/app_toast.dart';
 import '../../../core/widgets/app_back_button.dart';
 import '../application/material_categories_controller.dart';
 import '../domain/material_category.dart';
@@ -77,7 +79,7 @@ class MaterialCategoriesPage extends ConsumerWidget {
     WidgetRef ref, {
     MaterialCategory? category,
   }) async {
-    final result = await showDialog<_CategoryFormResult>(
+    final result = await showSlidingDialog<_CategoryFormResult>(
       context: context,
       builder: (dialogContext) => _CategoryFormDialog(category: category),
     );
@@ -99,14 +101,9 @@ class MaterialCategoriesPage extends ConsumerWidget {
           );
 
     if (message != null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-    } else if (category == null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Categoría creada con éxito'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      AppToast.showError(context, message);
+    } else if (context.mounted) {
+      AppToast.showSuccess(context, 'Guardado');
     }
   }
 

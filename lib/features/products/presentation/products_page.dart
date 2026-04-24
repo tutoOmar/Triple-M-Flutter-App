@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/formatting/display_number.dart';
+import '../../../core/widgets/app_dialog_transitions.dart';
+import '../../../core/widgets/app_toast.dart';
 import '../../../core/widgets/app_back_button.dart';
 import '../../material_categories/application/material_categories_controller.dart';
 import '../../material_categories/domain/material_category.dart';
@@ -381,7 +383,7 @@ Future<void> _openForm(
     return;
   }
 
-  final result = await showDialog<_ProductFormResult>(
+  final result = await showSlidingDialog<_ProductFormResult>(
     context: context,
     builder: (dialogContext) => _ProductFormDialog(
       subproducts: subproducts,
@@ -416,14 +418,9 @@ Future<void> _openForm(
         );
 
   if (message != null && context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    AppToast.showError(context, message);
   } else if (context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(product == null ? 'Producto creado con éxito' : 'Producto actualizado con éxito'),
-        backgroundColor: Colors.green,
-      ),
-    );
+    AppToast.showSuccess(context, 'Guardado');
   }
 }
 
@@ -794,6 +791,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late final TextEditingController _outputUnitController;
+  late final ScrollController _formScrollController;
   late bool _isActive;
   late bool _clientProvidesLona;
   late final List<_ComponentDraft> _components;
@@ -806,6 +804,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
     _nameController = TextEditingController(text: widget.product?.name ?? '');
     _descriptionController = TextEditingController(text: widget.product?.description ?? '');
     _outputUnitController = TextEditingController(text: widget.product?.outputUnit ?? '');
+    _formScrollController = ScrollController();
     _isActive = widget.product?.isActive ?? true;
     _clientProvidesLona = widget.product?.clientProvidesLona ?? false;
     _components = widget.product?.components
@@ -835,6 +834,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
     _nameController.dispose();
     _descriptionController.dispose();
     _outputUnitController.dispose();
+    _formScrollController.dispose();
     for (final draft in _components) {
       draft.dispose();
     }
@@ -864,6 +864,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
       content: SizedBox(
         width: 900,
         child: SingleChildScrollView(
+          controller: _formScrollController,
           child: Form(
             key: _formKey,
             child: Column(
@@ -942,6 +943,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                                   return;
                                 }
                                 FocusScope.of(context).requestFocus(draft.subproductFocusNode);
+                                _scrollToBottom();
                               });
                             },
                       icon: const Icon(Icons.add),
@@ -1098,6 +1100,17 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
       subproductsById: subproductsById,
       materialsById: materialsById,
       excludedCategoryIds: _clientProvidesLona ? excludedCategoryIds : const <String>{},
+    );
+  }
+
+  void _scrollToBottom() {
+    if (!_formScrollController.hasClients) {
+      return;
+    }
+    _formScrollController.animateTo(
+      _formScrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 240),
+      curve: Curves.easeOutCubic,
     );
   }
 }

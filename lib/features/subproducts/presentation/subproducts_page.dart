@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/formatting/display_number.dart';
 import '../../../core/formatting/money_text_input_formatter.dart';
+import '../../../core/widgets/app_dialog_transitions.dart';
+import '../../../core/widgets/app_toast.dart';
 import '../../../core/widgets/app_back_button.dart';
 import '../../material_categories/application/material_categories_controller.dart';
 import '../../material_categories/domain/material_category.dart';
@@ -121,7 +123,7 @@ class SubproductsPage extends ConsumerWidget {
       return;
     }
 
-    final result = await showDialog<_SubproductFormResult>(
+    final result = await showSlidingDialog<_SubproductFormResult>(
       context: context,
       builder: (dialogContext) => _SubproductFormDialog(
         materials: materials,
@@ -159,16 +161,9 @@ class SubproductsPage extends ConsumerWidget {
           );
 
     if (message != null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      AppToast.showError(context, message);
     } else if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            subproduct == null ? 'Subproducto creado con éxito' : 'Subproducto actualizado con éxito',
-          ),
-          backgroundColor: Colors.green,
-        ),
-      );
+      AppToast.showSuccess(context, 'Guardado');
     }
   }
 
@@ -452,6 +447,7 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
   late final TextEditingController _manufacturaController;
   late final TextEditingController _patinajejeController;
   late final TextEditingController _armadoBolsillosController;
+  late final ScrollController _formScrollController;
   late bool _isActive;
   late final List<_IngredientDraft> _ingredients;
   String? _formError;
@@ -467,6 +463,7 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
     _manufacturaController = TextEditingController(text: _moneyText(widget.subproduct?.manufacturaCost));
     _patinajejeController = TextEditingController(text: _moneyText(widget.subproduct?.patinajejeCost));
     _armadoBolsillosController = TextEditingController(text: _moneyText(widget.subproduct?.armadoBolsillosCost));
+    _formScrollController = ScrollController();
     _isActive = widget.subproduct?.isActive ?? true;
     _ingredients = widget.subproduct?.ingredients
             .map(
@@ -501,6 +498,7 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
     _manufacturaController.dispose();
     _patinajejeController.dispose();
     _armadoBolsillosController.dispose();
+    _formScrollController.dispose();
     for (final draft in _ingredients) {
       draft.dispose();
     }
@@ -528,6 +526,7 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
       content: SizedBox(
         width: 780,
         child: SingleChildScrollView(
+          controller: _formScrollController,
           child: Form(
             key: _formKey,
             child: Column(
@@ -653,6 +652,7 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
                             return;
                           }
                           FocusScope.of(context).requestFocus(draft.materialFocusNode);
+                          _scrollToBottom();
                         });
                       },
                       icon: const Icon(Icons.add),
@@ -801,6 +801,17 @@ class _SubproductFormDialogState extends State<_SubproductFormDialog> {
     }
     return formatDisplayNumber(value, fractionDigits: 0);
   }
+
+  void _scrollToBottom() {
+    if (!_formScrollController.hasClients) {
+      return;
+    }
+    _formScrollController.animateTo(
+      _formScrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 240),
+      curve: Curves.easeOutCubic,
+    );
+  }
 }
 
 class _IngredientRow extends StatelessWidget {
@@ -843,6 +854,7 @@ class _IngredientRow extends StatelessWidget {
             DropdownButtonFormField<String?>(
               initialValue: draft.materialId,
               focusNode: draft.materialFocusNode,
+              isExpanded: true,
               decoration: const InputDecoration(labelText: 'Materia prima'),
               items: materials
                   .map(

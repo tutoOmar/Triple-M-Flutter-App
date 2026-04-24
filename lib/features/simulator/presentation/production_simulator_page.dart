@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/formatting/display_number.dart';
+import '../../../core/widgets/app_toast.dart';
 import '../../../core/widgets/app_back_button.dart';
 import '../../material_categories/application/material_categories_controller.dart';
 import '../../materials/domain/material_item.dart';
@@ -128,13 +129,15 @@ class _ProductionSimulatorPageState extends ConsumerState<ProductionSimulatorPag
                                     ),
                                     const SizedBox(height: 16),
                                     FilledButton(
-                                      onPressed: selectedProduct == null ? null : () => _calculate(
-                                        product: selectedProduct,
-                                        materialsById: materialsById,
-                                        subproductsById: subproductsById,
-                                        categoryNamesById: categoryNamesById,
-                                        excludedCategoryIds: excludedCategoryIds,
-                                      ),
+                                      onPressed: selectedProduct == null
+                                          ? null
+                                          : () => _calculate(
+                                                product: selectedProduct,
+                                                materialsById: materialsById,
+                                                subproductsById: subproductsById,
+                                                categoryNamesById: categoryNamesById,
+                                                excludedCategoryIds: excludedCategoryIds,
+                                              ),
                                       child: const Text('Calcular'),
                                     ),
                                   ],
@@ -210,13 +213,13 @@ class _ProductionSimulatorPageState extends ConsumerState<ProductionSimulatorPag
     return products.firstOrNull;
   }
 
-  void _calculate({
+  Future<void> _calculate({
     required Product product,
     required Map<String, MaterialItem> materialsById,
     required Map<String, Subproduct> subproductsById,
     required Map<String, String> categoryNamesById,
     required Set<String> excludedCategoryIds,
-  }) {
+  }) async {
     final quantity = double.tryParse(_quantityController.text.replaceAll(',', '.'));
     if (quantity == null || quantity <= 0) {
       setState(() {
@@ -226,17 +229,28 @@ class _ProductionSimulatorPageState extends ConsumerState<ProductionSimulatorPag
       return;
     }
 
-    setState(() {
-      _formError = null;
-      _breakdown = _simulatorCalculator.calculate(
-        product: product,
-        quantity: quantity,
-        subproductsById: subproductsById,
-        materialsById: materialsById,
-        categoryNamesById: categoryNamesById,
-        excludedCategoryIds: product.clientProvidesLona ? excludedCategoryIds : const <String>{},
-      );
-    });
+    final loadingToast = AppToast.showLoading(context, 'Calculando...');
+    try {
+      await Future.delayed(const Duration(milliseconds: 350));
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _formError = null;
+        _breakdown = _simulatorCalculator.calculate(
+          product: product,
+          quantity: quantity,
+          subproductsById: subproductsById,
+          materialsById: materialsById,
+          categoryNamesById: categoryNamesById,
+          excludedCategoryIds: product.clientProvidesLona ? excludedCategoryIds : const <String>{},
+        );
+      });
+    } finally {
+      loadingToast.close();
+    }
   }
 }
 

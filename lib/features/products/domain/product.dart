@@ -38,6 +38,7 @@ class Product {
     required this.nameKey,
     required this.description,
     required this.outputUnit,
+    required this.salePrice,
     required this.clientProvidesLona,
     required this.components,
     required this.isActive,
@@ -50,6 +51,7 @@ class Product {
   final String nameKey;
   final String? description;
   final String outputUnit;
+  final double salePrice;
   final bool clientProvidesLona;
   final List<ProductComponent> components;
   final bool isActive;
@@ -68,6 +70,7 @@ class Product {
       nameKey: data['nameKey'] as String? ?? '',
       description: data['description'] as String?,
       outputUnit: data['outputUnit'] as String? ?? '',
+      salePrice: (data['salePrice'] as num?)?.toDouble() ?? 0,
       clientProvidesLona: data['clientProvidesLona'] as bool? ?? false,
       components: rawComponents
           .whereType<Map<String, dynamic>>()
@@ -85,6 +88,7 @@ class Product {
       'nameKey': nameKey,
       'description': description,
       'outputUnit': outputUnit,
+      'salePrice': salePrice,
       'clientProvidesLona': clientProvidesLona,
       'components': components.map((component) => component.toMap()).toList(growable: false),
       'isActive': isActive,

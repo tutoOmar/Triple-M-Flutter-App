@@ -208,7 +208,13 @@ class _MaterialsPageState extends ConsumerState<MaterialsPage> {
         .deleteMaterial(material.id);
 
     if (message != null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      AppToast.showError(context, message);
+      return;
+    }
+
+    if (context.mounted) {
+      AppToast.showSuccess(context, 'Materia prima eliminada');
+      ref.invalidate(materialsStreamProvider);
     }
   }
 

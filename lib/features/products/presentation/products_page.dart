@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/formatting/display_number.dart';
+import '../../../core/formatting/money_text_input_formatter.dart';
 import '../../../core/widgets/app_dialog_transitions.dart';
 import '../../../core/widgets/app_toast.dart';
 import '../../../core/widgets/app_back_button.dart';
@@ -403,6 +404,7 @@ Future<void> _openForm(
           name: result.name,
           description: result.description,
           outputUnit: result.outputUnit,
+          salePrice: result.salePrice,
           clientProvidesLona: result.clientProvidesLona,
           isActive: result.isActive,
           components: result.components,
@@ -412,6 +414,7 @@ Future<void> _openForm(
           name: result.name,
           description: result.description,
           outputUnit: result.outputUnit,
+          salePrice: result.salePrice,
           clientProvidesLona: result.clientProvidesLona,
           isActive: result.isActive,
           components: result.components,
@@ -453,11 +456,9 @@ Future<void> _confirmDelete(
 
   final message = await ref.read(productsControllerProvider.notifier).deleteProduct(product.id);
   if (message != null && context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    AppToast.showError(context, message);
   } else if (context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Producto eliminado con éxito'), backgroundColor: Colors.green),
-    );
+    AppToast.showSuccess(context, 'Producto eliminado');
     context.go('/products');
   }
 }
@@ -520,6 +521,7 @@ class _ProductCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text('${product.outputUnit} · Costo unitario ${formatDisplayNumber(breakdown.unitCost)}'),
+            Text('Precio de venta ${formatDisplayNumber(product.salePrice)}'),
             if (product.description != null && product.description!.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(product.description!),
@@ -569,6 +571,7 @@ class _ProductSummaryCard extends StatelessWidget {
             Text(product.outputUnit),
             const SizedBox(height: 12),
             Text('Costo unitario ${formatDisplayNumber(breakdown.unitCost)}', style: Theme.of(context).textTheme.titleLarge),
+            Text('Precio de venta ${formatDisplayNumber(product.salePrice)}', style: Theme.of(context).textTheme.titleMedium),
             if (product.description != null && product.description!.isNotEmpty) ...[
               const SizedBox(height: 12),
               Text(product.description!),
@@ -757,6 +760,7 @@ class _ProductFormResult {
     required this.name,
     required this.description,
     required this.outputUnit,
+    required this.salePrice,
     required this.clientProvidesLona,
     required this.isActive,
     required this.components,
@@ -765,6 +769,7 @@ class _ProductFormResult {
   final String name;
   final String? description;
   final String outputUnit;
+  final double salePrice;
   final bool clientProvidesLona;
   final bool isActive;
   final List<ProductComponent> components;
@@ -791,6 +796,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late final TextEditingController _outputUnitController;
+  late final TextEditingController _salePriceController;
   late final ScrollController _formScrollController;
   late bool _isActive;
   late bool _clientProvidesLona;
@@ -804,6 +810,9 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
     _nameController = TextEditingController(text: widget.product?.name ?? '');
     _descriptionController = TextEditingController(text: widget.product?.description ?? '');
     _outputUnitController = TextEditingController(text: widget.product?.outputUnit ?? '');
+    _salePriceController = TextEditingController(
+      text: formatDisplayNumber(widget.product?.salePrice ?? 0, fractionDigits: 0),
+    );
     _formScrollController = ScrollController();
     _isActive = widget.product?.isActive ?? true;
     _clientProvidesLona = widget.product?.clientProvidesLona ?? false;
@@ -834,6 +843,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
     _nameController.dispose();
     _descriptionController.dispose();
     _outputUnitController.dispose();
+    _salePriceController.dispose();
     _formScrollController.dispose();
     for (final draft in _components) {
       draft.dispose();
@@ -905,6 +915,23 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                   validator: (value) {
                     if ((value ?? '').trim().isEmpty) {
                       return 'La unidad de salida es obligatoria.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _salePriceController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: const [MoneyTextInputFormatter()],
+                  decoration: const InputDecoration(labelText: 'Precio de venta'),
+                  validator: (value) {
+                    final parsed = parseMoneyText(value ?? '');
+                    if (parsed == null) {
+                      return 'Ingresa un precio válido.';
+                    }
+                    if (parsed < 0) {
+                      return 'El precio debe ser mayor o igual a cero.';
                     }
                     return null;
                   },
@@ -1035,6 +1062,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                           ? null
                           : _descriptionController.text.trim(),
                       outputUnit: _outputUnitController.text.trim(),
+                      salePrice: parseMoneyText(_salePriceController.text)?.toDouble() ?? 0,
                       clientProvidesLona: _clientProvidesLona,
                       isActive: _isActive,
                       components: components,

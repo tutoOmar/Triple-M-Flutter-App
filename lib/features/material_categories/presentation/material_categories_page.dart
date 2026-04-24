@@ -139,7 +139,13 @@ class MaterialCategoriesPage extends ConsumerWidget {
         .deleteCategory(category.id);
 
     if (message != null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      AppToast.showError(context, message);
+      return;
+    }
+
+    if (context.mounted) {
+      AppToast.showSuccess(context, 'Categoría eliminada');
+      ref.invalidate(materialCategoriesStreamProvider);
     }
   }
 }

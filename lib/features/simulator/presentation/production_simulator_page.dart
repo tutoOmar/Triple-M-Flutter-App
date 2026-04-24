@@ -369,7 +369,7 @@ class _MaterialBreakdownCard extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 12),
                   child: DecoratedBox(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      color: const Color(0xFFEAF4FF),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Padding(

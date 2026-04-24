@@ -26,6 +26,7 @@ class ProductsController extends AsyncNotifier<void> {
     required String name,
     required String? description,
     required String outputUnit,
+    required double salePrice,
     required bool clientProvidesLona,
     required bool isActive,
     required List<ProductComponent> components,
@@ -36,12 +37,14 @@ class ProductsController extends AsyncNotifier<void> {
       await _validatePayload(
         name: name,
         outputUnit: outputUnit,
+        salePrice: salePrice,
         components: components,
       );
       await _service.create(
         name: name,
         description: description,
         outputUnit: outputUnit,
+        salePrice: salePrice,
         clientProvidesLona: clientProvidesLona,
         isActive: isActive,
         components: components,
@@ -62,6 +65,7 @@ class ProductsController extends AsyncNotifier<void> {
     required String name,
     required String? description,
     required String outputUnit,
+    required double salePrice,
     required bool clientProvidesLona,
     required bool isActive,
     required List<ProductComponent> components,
@@ -73,6 +77,7 @@ class ProductsController extends AsyncNotifier<void> {
         ignoreId: id,
         name: name,
         outputUnit: outputUnit,
+        salePrice: salePrice,
         components: components,
       );
       await _service.update(
@@ -80,6 +85,7 @@ class ProductsController extends AsyncNotifier<void> {
         name: name,
         description: description,
         outputUnit: outputUnit,
+        salePrice: salePrice,
         clientProvidesLona: clientProvidesLona,
         isActive: isActive,
         components: components,
@@ -115,6 +121,7 @@ class ProductsController extends AsyncNotifier<void> {
     String? ignoreId,
     required String name,
     required String outputUnit,
+    required double salePrice,
     required List<ProductComponent> components,
   }) async {
     if (name.trim().isEmpty) {
@@ -122,6 +129,9 @@ class ProductsController extends AsyncNotifier<void> {
     }
     if (outputUnit.trim().isEmpty) {
       throw StateError('La unidad de salida es obligatoria.');
+    }
+    if (salePrice < 0) {
+      throw StateError('El precio de venta debe ser mayor o igual a cero.');
     }
     if (components.isEmpty) {
       throw StateError('Debes agregar al menos un componente.');
@@ -172,6 +182,9 @@ class ProductsController extends AsyncNotifier<void> {
     }
     if (text.contains('mayores a cero')) {
       return 'Todas las cantidades deben ser mayores a cero.';
+    }
+    if (text.contains('precio de venta') || text.contains('mayor o igual a cero')) {
+      return 'El precio de venta debe ser mayor o igual a cero.';
     }
     return 'No se pudo completar la acción. Intenta nuevamente.';
   }

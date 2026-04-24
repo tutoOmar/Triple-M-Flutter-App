@@ -25,7 +25,7 @@ class MoneyTextInputFormatter extends TextInputFormatter {
 }
 
 int? parseMoneyText(String value) {
-  final sanitized = value.replaceAll(RegExp(r'[\s,]'), '');
+  final sanitized = value.replaceAll(RegExp(r'[\s,\.]'), '');
 
   if (sanitized.isEmpty || !RegExp(r'^\d+$').hasMatch(sanitized)) {
     return null;

@@ -197,7 +197,13 @@ class SubproductsPage extends ConsumerWidget {
     final message = await ref.read(subproductsControllerProvider.notifier).deleteSubproduct(subproduct.id);
 
     if (message != null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      AppToast.showError(context, message);
+      return;
+    }
+
+    if (context.mounted) {
+      AppToast.showSuccess(context, 'Subproducto eliminado');
+      ref.invalidate(subproductsStreamProvider);
     }
   }
 
